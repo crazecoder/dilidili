@@ -10,7 +10,7 @@ class DetailHome extends StatefulWidget {
   final String name;
   final String picture;
 
-  DetailHome({this.url, this.name,this.picture});
+  DetailHome({this.url, this.name, this.picture});
 
   @override
   State<StatefulWidget> createState() => new DetailHomeState();
@@ -72,6 +72,7 @@ class DetailHomeState extends State<DetailHome> {
               itemBuilder: (_, i) {
                 return new GestureDetector(
                     onTap: () {
+                      _cartoons[i].picture = widget.picture;
                       String json = jsonEncode(_cartoons[i]);
                       json = json.replaceAll("/", "]");
                       Application.router.navigateTo(context, '/play/$json');
