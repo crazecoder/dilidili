@@ -41,8 +41,8 @@ class HistoryBodyState extends State<HistoryBody> {
                       child: new Row(
                         children: <Widget>[
                           new Container(
+                            padding: EdgeInsets.only(left: 10,right: 10,top: 5,bottom: 5),
                             width: 80.0,
-                            height: 100.0,
                             child: new CachedNetworkImage(
                                 imageUrl: _cartoons[i].picture),
                           ),
