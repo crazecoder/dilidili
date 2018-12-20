@@ -1,8 +1,10 @@
 # dilidili
 
-A new Flutter project.
+嘀哩嘀哩客户端
 
-## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+## 截图
+
+<img src="https://raw.githubusercontent.com/crazecoder/dilidili/master/screenshot/screen.png" width="50%" height="50%" />
+
+
