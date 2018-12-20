@@ -55,7 +55,8 @@ class CategoryDetailBodyState
     return new GestureDetector(
       onTap: () {
         String url = cartoon.url.replaceAll("/", "[");
-        Application.router.navigateTo(context, '/detail/$url/${cartoon.name}');
+        String picture = cartoon.picture.replaceAll("/", "[");
+        Application.router.navigateTo(context, '/detail/$url/${cartoon.name}/$picture');
       },
       child: new Card(
         child: new Column(
@@ -63,7 +64,7 @@ class CategoryDetailBodyState
             new Expanded(
               child: new CachedNetworkImage(
                 imageUrl: cartoon.picture,
-                placeholder: new CircularProgressIndicator(),
+                placeholder: Center(child: CircularProgressIndicator(),) ,
                 errorWidget: new Icon(Icons.error),
               ),
             ),

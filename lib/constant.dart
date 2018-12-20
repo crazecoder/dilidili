@@ -1,3 +1,3 @@
 class ConstantValue{
-  static const bool IS_DEBUG = false;
+  static const bool IS_DEBUG = true;
 }

@@ -37,12 +37,12 @@ class HtmlUtils {
 //  static Future<List<Cartoon>> parseCategoryDetail(String homeHtml) async {
 //    return _parseCategoryDetail(homeHtml);
 //  }
-  static List<Cartoon> parseCategoryDetail(String html){
+  static List<Cartoon> parseCategoryDetail(String html) {
     var cartoons = <Cartoon>[];
     var doc = parse(html);
     List<Element> els =
-    doc.documentElement.getElementsByClassName("anime_list");
-    if(els.length==0) return cartoons;
+        doc.documentElement.getElementsByClassName("anime_list");
+    if (els.length == 0) return cartoons;
     List<Element> as = els?.first.getElementsByTagName("dl");
     log('${as.length}');
     as.forEach((element) {
@@ -59,6 +59,32 @@ class HtmlUtils {
       String name = h3.getElementsByTagName("a").first.innerHtml;
       var picture = img.attributes.values.elementAt(0);
       Cartoon cartoon = new Cartoon(url: url, picture: picture, name: name);
+      cartoons.add(cartoon);
+    });
+    return cartoons;
+  }
+
+  static List<Cartoon> parseCategoryDetailHome(String html) {
+    var cartoons = <Cartoon>[];
+    var doc = parse(html);
+    List<Element> els =
+        doc.documentElement.getElementsByClassName("swiper-slide");
+    if (els.length == 0) return cartoons;
+    List<Element> as = els?.first.getElementsByTagName("li");
+    log('${as.length}');
+    as.forEach((element) {
+//      List<Element> dts = element.getElementsByTagName("a");
+      Element a = element.getElementsByTagName("a").first;
+      String url = a
+          .attributes
+          .values
+          .elementAt(0);
+      Element dds = a.getElementsByTagName("em").first;
+      String name = dds.innerHtml;
+      name = name.replaceAll(RegExp("<span>(.+)<\/span>"), "");
+//      Element img = a.getElementsByTagName("img").first;
+//      var picture = img.attributes.values.elementAt(0);
+      Cartoon cartoon = new Cartoon(url: url, name: name);
       cartoons.add(cartoon);
     });
     return cartoons;

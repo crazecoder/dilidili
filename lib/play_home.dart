@@ -4,6 +4,7 @@ import 'utils/html_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'db/db_helper.dart';
 import 'lib/library.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class PlayHome extends StatefulWidget {
   final Cartoon cartoon;
@@ -15,11 +16,29 @@ class PlayHome extends StatefulWidget {
 }
 
 class PlayHomeState extends State<PlayHome> {
+  String _playUrl = "";
+  bool _isHttpComplete = false;
+
   @override
   Widget build(BuildContext context) {
-    return new Center(
-      child: new CircularProgressIndicator(),
-    );
+    print(_playUrl);
+    if (_isHttpComplete) {
+      return new WebviewScaffold(
+        url: _playUrl,
+        withJavascript: true,
+        clearCache: true,
+        withLocalStorage: true,
+        withZoom: true,
+        appBar: AppBar(
+          title: new Text(widget.cartoon.name),
+          centerTitle: true,
+        ),
+      );
+    } else {
+      return new Center(
+        child: new CircularProgressIndicator(),
+      );
+    }
   }
 
   @override
@@ -28,10 +47,15 @@ class PlayHomeState extends State<PlayHome> {
     String url = widget.cartoon.url.replaceAll("[", "/");
     http.htmlGetPlay((html) {
       HtmlUtils.parsePlay(html, (_url) {
+        print("----------$_url");
         DbHelper().insertCartoon(widget.cartoon, () {
-          _launchURL(_url, () {
-            Navigator.pop(context);
+          setState(() {
+            _playUrl = _url;
+            _isHttpComplete = true;
           });
+//          _launchURL(_url, () {
+//          Navigator.pop(context);
+//          });
         });
       }, () {
         _showSnackBar("播放界面解析失败");

@@ -8,8 +8,9 @@ import 'dart:convert';
 class DetailHome extends StatefulWidget {
   final String url;
   final String name;
+  final String picture;
 
-  DetailHome({this.url, this.name});
+  DetailHome({this.url, this.name,this.picture});
 
   @override
   State<StatefulWidget> createState() => new DetailHomeState();
@@ -50,7 +51,7 @@ class DetailHomeState extends State<DetailHome> {
                   child: new Container(
                     alignment: Alignment.topLeft,
                     child: new CachedNetworkImage(
-                      imageUrl: _cartoons[0].picture,
+                      imageUrl: widget.picture.replaceAll("[", "/"),
                       placeholder: new Center(
                         child: new CircularProgressIndicator(),
                       ),
@@ -61,7 +62,7 @@ class DetailHomeState extends State<DetailHome> {
                   flex: 4,
                   child: new Container(
                     padding: new EdgeInsets.only(left: 10.0),
-                    child: new Text(_cartoons[0].intro),
+                    child: new Text(widget.name),
                   ))
             ],
           ),
@@ -100,7 +101,7 @@ class DetailHomeState extends State<DetailHome> {
     // TODO: implement initState
     super.initState();
     String url = widget.url.replaceAll("[", "/");
-    http.htmlGetCategoryDetail(url, sfn: (_cs) {
+    http.htmlGetCategoryDetailHome(url, sfn: (_cs) {
       setState(() {
         _cartoons = _cs;
         isCompelete = true;

@@ -9,8 +9,10 @@ import 'lib/library.dart';
 import 'ui/detail_home.dart';
 import 'constant.dart';
 import 'utils/my_print.dart';
+import 'package:flutter/foundation.dart';
 
 void main() {
+  debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   final Router router = new Router();
   // Define our splash page.
   router.define(
@@ -29,12 +31,13 @@ void main() {
     ),
   );
   router.define(
-    "/detail/:url/:name",
+    "/detail/:url/:name/:picture",
     handler: new Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) {
         return new DetailHome(
           url: params["url"][0],
           name: params["name"][0],
+          picture: params["picture"][0],
         );
       },
     ),

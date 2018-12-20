@@ -43,6 +43,23 @@ Future<Null> htmlGetCategoryDetail(String url,
 //  await client.close();
 }
 
+Future<Null> htmlGetCategoryDetailHome(String url,
+    {Function sfn, Function ffn}) async {
+  var _url = "http://www.dilidili.wang" + url;
+  final client = new ConsoleClient();
+  final rs = await client.send(new Request('GET', _url));
+  final textContent = await rs.readAsString();
+  log(textContent);
+  var cartoons = await compute(HtmlUtils.parseCategoryDetailHome, textContent);
+  if (cartoons.isEmpty) {
+    ffn();
+  } else
+    sfn(cartoons);
+
+//  callback(textContent);
+//  await client.close();
+}
+
 void htmlGetPlay(HttpCallback callback, String _url) async {
   log(_url);
   final client = new ConsoleClient();
