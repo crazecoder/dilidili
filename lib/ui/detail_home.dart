@@ -52,10 +52,10 @@ class DetailHomeState extends State<DetailHome> {
                     alignment: Alignment.topLeft,
                     child: new CachedNetworkImage(
                       imageUrl: widget.picture.replaceAll("[", "/"),
-                      placeholder: new Center(
+                      placeholder: (_,s)=>new Center(
                         child: new CircularProgressIndicator(),
                       ),
-                      errorWidget: new Icon(Icons.error),
+                      errorWidget: (_,_s,_o)=>new Icon(Icons.error),
                     ),
                   )),
               new Flexible(

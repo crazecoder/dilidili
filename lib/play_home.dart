@@ -6,6 +6,7 @@ import 'db/db_helper.dart';
 import 'lib/library.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
+
 class PlayHome extends StatefulWidget {
   final Cartoon cartoon;
 
@@ -18,22 +19,23 @@ class PlayHome extends StatefulWidget {
 class PlayHomeState extends State<PlayHome> {
   String _playUrl = "";
   bool _isHttpComplete = false;
+  FlutterWebviewPlugin plugin = FlutterWebviewPlugin();
 
   @override
   Widget build(BuildContext context) {
     print(_playUrl);
     if (_isHttpComplete) {
       return new WebviewScaffold(
-        url: _playUrl,
-        withJavascript: true,
-        clearCache: true,
-        withLocalStorage: true,
-        withZoom: true,
-        appBar: AppBar(
-          title: new Text(widget.cartoon.name),
-          centerTitle: true,
-        ),
-      );
+         url: _playUrl,
+         withJavascript: true,
+         clearCache: true,
+         withLocalStorage: true,
+         withZoom: false,
+         appBar: AppBar(
+           title: new Text(widget.cartoon.name),
+           centerTitle: true,
+         ),
+       );
     } else {
       return new Center(
         child: new CircularProgressIndicator(),
@@ -76,6 +78,7 @@ class PlayHomeState extends State<PlayHome> {
   @override
   void dispose() {
     DbHelper().close();
+    plugin.close();
     super.dispose();
   }
 

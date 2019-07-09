@@ -12,7 +12,7 @@ import 'utils/my_print.dart';
 import 'package:flutter/foundation.dart';
 
 void main() {
-  debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+  // debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   final Router router = new Router();
   // Define our splash page.
   router.define(

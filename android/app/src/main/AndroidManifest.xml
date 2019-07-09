@@ -15,7 +15,8 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="dilidili"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

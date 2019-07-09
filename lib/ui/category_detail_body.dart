@@ -20,10 +20,8 @@ class CategoryDetailBody extends StatefulWidget {
   State<StatefulWidget> createState() => new CategoryDetailBodyState();
 }
 
-class CategoryDetailBodyState
-    extends State<CategoryDetailBody>
-    with AutomaticKeepAliveClientMixin
-{
+class CategoryDetailBodyState extends State<CategoryDetailBody>
+    with AutomaticKeepAliveClientMixin {
   static bool _keepAlive = false;
   bool isHttpComplete = false;
   var cartoons = <Cartoon>[];
@@ -56,7 +54,8 @@ class CategoryDetailBodyState
       onTap: () {
         String url = cartoon.url.replaceAll("/", "[");
         String picture = cartoon.picture.replaceAll("/", "[");
-        Application.router.navigateTo(context, '/detail/$url/${cartoon.name}/$picture');
+        Application.router
+            .navigateTo(context, '/detail/$url/${cartoon.name}/$picture');
       },
       child: new Card(
         child: new Column(
@@ -64,8 +63,10 @@ class CategoryDetailBodyState
             new Expanded(
               child: new CachedNetworkImage(
                 imageUrl: cartoon.picture,
-                placeholder: Center(child: CircularProgressIndicator(),) ,
-                errorWidget: new Icon(Icons.error),
+                placeholder: (context,str)=>Center(
+                  child: CircularProgressIndicator(),
+                ),
+                errorWidget: (_,_s,_o)=>new Icon(Icons.error),
               ),
             ),
             new Text(
@@ -81,13 +82,16 @@ class CategoryDetailBodyState
   @override
   void initState() {
     super.initState();
-    http.htmlGetCategoryDetail(widget.url, sfn:(_cs) {
-      if (mounted)
-        setState(() {
-          cartoons = _cs;
-          isHttpComplete = true;
-        });
-    },);
+    http.htmlGetCategoryDetail(
+      widget.url,
+      sfn: (_cs) {
+        if (mounted)
+          setState(() {
+            cartoons = _cs;
+            isHttpComplete = true;
+          });
+      },
+    );
     SchedulerBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _keepAlive = true;

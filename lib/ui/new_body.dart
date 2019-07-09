@@ -75,10 +75,10 @@ class NewBodyState extends State<NewBody>
             new Expanded(
               child: new CachedNetworkImage(
                 imageUrl: cartoon.picture,
-                placeholder: new Center(
+                placeholder: (_,_s)=>new Center(
                   child: new CircularProgressIndicator(),
                 ),
-                errorWidget: new Icon(Icons.error),
+                errorWidget: (_,_s,_o)=>new Icon(Icons.error),
               ),
             ),
             new Text(

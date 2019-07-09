@@ -56,8 +56,8 @@ class CategoryBodyState
       HtmlUtils.parseCategory(_html, (_categorys) {
         setState(() {
           categorys = _categorys;
-          var category = new Category(name: "肉番", url: "/roufan/");
-          categorys.add(category);
+          // var category = new Category(name: "肉番", url: "/roufan/");
+          // categorys.add(category);
           isHttpComplete = true;
           _controller  = new TabController(length: categorys.length, vsync: this);
         });
