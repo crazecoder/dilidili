@@ -73,7 +73,7 @@ void htmlGetPlay(HttpCallback callback, String _url) async {
 
 void htmlGetSearch(HttpCallback callback, String _name) async {
   var _url =
-      "http://zhannei.baidu.com/cse/search?s=4514337681231489739&loc=$URL/search/index.html?q=$_name&button=%E6%90%9C%E7%B4%A2&ie=utf8&site=www.dilidili.wang&width=552&q=$_name&button=%E6%90%9C%E7%B4%A2&ie=utf8&site=www.dilidili.wang&wt=1&ht=1&pn=10&fpos=2&rmem=0&reg=";
+      "http://zhannei.baidu.com/cse/site?kwtype=0&q=$_name&stp=1&ie=utf8&src=zz&site=www.dilidili.name&cc=www.dilidili.name&rg=1";
   final client = new ConsoleClient();
   log(_url);
   final rs = await client.send(new Request('GET', _url));

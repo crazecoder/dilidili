@@ -77,6 +77,7 @@ class DetailHomeState extends State<DetailHome> {
                       _cartoons[i].picture = widget.picture;
                       String json = jsonEncode(_cartoons[i]);
                       json = json.replaceAll("/", "]");
+                      json = json.replaceAll("?", "");
                       Application.router.navigateTo(context, '/play/$json');
                     },
                     child: new Column(

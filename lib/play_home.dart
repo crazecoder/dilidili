@@ -19,6 +19,7 @@ class PlayHome extends StatefulWidget {
 class PlayHomeState extends State<PlayHome> {
   String _playUrl = "";
   bool _isHttpComplete = false;
+
   // final FlutterWebviewPlugin flutterWebviewPlugin = FlutterWebviewPlugin();
   IjkMediaController controller = IjkMediaController();
 
@@ -27,10 +28,16 @@ class PlayHomeState extends State<PlayHome> {
     print(_playUrl);
     if (_isHttpComplete) {
       if (getVideoUrl(_playUrl).length > 0) {
-        String url = getVideoUrl(_playUrl)[0].replaceAll("http://player.jfrft.net/index.php?url=", "");
+        String url = getVideoUrl(_playUrl)[0]
+            .replaceAll("http://player.jfrft.net/index.php?url=", "");
         print(url);
         controller.setNetworkDataSource(url, autoPlay: true);
-        return Scaffold(appBar: AppBar(title: Text(widget.cartoon.name),),body: buildIjkPlayer(),);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.cartoon.name),
+          ),
+          body: buildIjkPlayer(),
+        );
       } else {
         return new WebviewScaffold(
           url: _playUrl,
@@ -86,7 +93,7 @@ class PlayHomeState extends State<PlayHome> {
   void dispose() {
     DbHelper().close();
     // flutterWebviewPlugin?.close();
-    controller.pause();
+    controller.stop();
     controller.dispose();
     super.dispose();
   }
