@@ -5,6 +5,7 @@ import 'package:dilidili/utils/html_util.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 
+
 class DetailHome extends StatefulWidget {
   final String url;
   final String name;
@@ -21,6 +22,7 @@ class DetailHomeState extends State<DetailHome> {
   bool isCompelete = false;
   bool isFailed = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
 
   @override
   Widget build(BuildContext context) {
