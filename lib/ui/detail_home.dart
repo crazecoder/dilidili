@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dilidili/http.dart' as http;
 import 'package:dilidili/lib/library.dart';
-import 'package:dilidili/utils/html_util.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
-
 
 class DetailHome extends StatefulWidget {
   final String url;
@@ -22,7 +20,6 @@ class DetailHomeState extends State<DetailHome> {
   bool isCompelete = false;
   bool isFailed = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +51,10 @@ class DetailHomeState extends State<DetailHome> {
                     alignment: Alignment.topLeft,
                     child: new CachedNetworkImage(
                       imageUrl: widget.picture.replaceAll("[", "/"),
-                      placeholder: (_,s)=>new Center(
+                      placeholder: (_, s) => new Center(
                         child: new CircularProgressIndicator(),
                       ),
-                      errorWidget: (_,_s,_o)=>new Icon(Icons.error),
+                      errorWidget: (_, _s, _o) => new Icon(Icons.error),
                     ),
                   )),
               new Flexible(

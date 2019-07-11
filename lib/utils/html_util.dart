@@ -4,6 +4,7 @@ import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 import 'my_print.dart';
 import 'package:dilidili/lib/library.dart';
+import '../constant.dart';
 
 class HtmlUtils {
   static Future<Null> parseHome(String homeHtml, Function fn) async {
@@ -152,7 +153,8 @@ class HtmlUtils {
     Element results = doc.getElementById("results");
     List<Element> clears = results.getElementsByClassName("result\ f\ s0");
     if (clears.isEmpty) {
-      throw new Exception();
+      fn(cartoons);
+      return;
     }
     clears.forEach((element) {
       Element h3 = element.getElementsByTagName("h3").first;
@@ -161,8 +163,8 @@ class HtmlUtils {
       name = name.replaceAll("<em>", "");
       name = name.replaceAll("</em>", "");
       var url = a.attributes.values.elementAt(2);
-      if (url.contains("www.dilidili.wang/")) {
-        url = url.replaceAll("http://www.dilidili.wang", "");
+      if (url.contains(ConstantValue.URL)) {
+        url = url.replaceAll(ConstantValue.URL, "");
         Cartoon value = new Cartoon(url: url, name: name);
         cartoons.add(value);
       }

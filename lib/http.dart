@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:http_client/console.dart';
 import 'package:dilidili/utils/my_print.dart';
 import 'utils/html_util.dart';
-import 'lib/library.dart';
 import 'lib/my_isolate.dart';
+import 'constant.dart';
 
-const URL = 'http://www.dilidili.name';
 void htmlGetHome(HttpCallback callback) async {
-  var _url = "$URL/zxgx/?1";
+  var _url = "${ConstantValue.URL}/zxgx/?1";
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
@@ -18,7 +17,7 @@ void htmlGetHome(HttpCallback callback) async {
 }
 
 void htmlGetCategory(HttpCallback callback) async {
-  var _url = "$URL/tvdh/?1";
+  var _url = "${ConstantValue.URL}/tvdh/?1";
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
@@ -29,7 +28,7 @@ void htmlGetCategory(HttpCallback callback) async {
 
 Future<Null> htmlGetCategoryDetail(String url,
     {Function sfn, Function ffn}) async {
-  var _url = URL + url;
+  var _url = ConstantValue.URL + url;
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
@@ -46,7 +45,7 @@ Future<Null> htmlGetCategoryDetail(String url,
 
 Future<Null> htmlGetCategoryDetailHome(String url,
     {Function sfn, Function ffn}) async {
-  var _url = URL + url;
+  var _url = ConstantValue.URL + url;
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
@@ -74,6 +73,7 @@ void htmlGetPlay(HttpCallback callback, String _url) async {
 void htmlGetSearch(HttpCallback callback, String _name) async {
   var _url =
       "http://zhannei.baidu.com/cse/site?kwtype=0&q=$_name&stp=1&ie=utf8&src=zz&site=www.dilidili.name&cc=www.dilidili.name&rg=1";
+//  var _url = "http://zhannei.baidu.com/cse/site?q=$_name&click=1&cc=www.dilidili.name&s=&nsid=";
   final client = new ConsoleClient();
   log(_url);
   final rs = await client.send(new Request('GET', _url));

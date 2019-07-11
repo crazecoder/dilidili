@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:dilidili/utils/html_util.dart';
 import 'package:dilidili/http.dart' as http;
@@ -17,63 +19,77 @@ class SearchBodyState extends State<SearchBody> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isFailed) {
-      return  new Scaffold(body: new Column(
-        children: <Widget>[
-          _buildSearchView(),
-          new Expanded(
-            child: new Center(
-              child: new Text("获取数据异常，请访问官网查看"),
-            ),
-          )
-        ],
-      ),);
+    if ((_isHttpCompelete && _cartoons.length == 0) || _isFailed) {
+      return new Scaffold(
+        body: new Column(
+          children: <Widget>[
+            _buildSearchView(),
+            new Expanded(
+              child: new Center(
+                child: new Text(_isFailed ? "获取数据异常，请访问官网查看" : "抱歉，没有找到相关结果。"),
+              ),
+            )
+          ],
+        ),
+      );
     }
     if (_isHttpCompelete && _cartoons.length != 0) {
-      return new Scaffold(body: new Column(
-        children: <Widget>[
-          _buildSearchView(),
-          new Expanded(
-            child: new ListView.builder(
-                itemCount: _cartoons.length,
-                itemBuilder: (_, i) {
-                  return new GestureDetector(
-                    onTap: () {
-                      String url = _cartoons[i].url.replaceAll("/", "[");
-                      Application.router.navigateTo(
-                          context, '/detail/$url/${_cartoons[i].name}');
-                    },
-                    child: new Column(
-                      children: <Widget>[
-                        new Container(
-                          padding: new EdgeInsets.all(10.0),
-                          child: new Text(_cartoons[i].name),
-                        ),
-                        new Divider()
-                      ],
-                    ),
-                  );
-                }),
-          )
-        ],
-      ),);
+      return new Scaffold(
+        body: new Column(
+          children: <Widget>[
+            _buildSearchView(),
+            new Expanded(
+              child: new ListView.builder(
+                  itemCount: _cartoons.length,
+                  itemBuilder: (_, i) {
+                    return new GestureDetector(
+                      onTap: () {
+                        String url = _cartoons[i].url.replaceAll("/", "[");
+//                        if (url.contains("watch")) {
+//                          String json = jsonEncode(_cartoons[i]);
+//                          json = json.replaceAll("/", "]");
+//                          json = json.replaceAll("?", "");
+//                          Application.router.navigateTo(context, '/play/$json');
+//                        } else
+                        Application.router.navigateTo(context,
+                            '/detail/$url/${_cartoons[i].name}/${_cartoons[i].picture}');
+                      },
+                      child: new Column(
+                        children: <Widget>[
+                          new Container(
+                            padding: new EdgeInsets.all(10.0),
+                            child: new Text(_cartoons[i].name),
+                          ),
+                          new Divider()
+                        ],
+                      ),
+                    );
+                  }),
+            )
+          ],
+        ),
+      );
     } else if (!_isHttpCompelete) {
-      return new Scaffold(body: new Column(
-        children: <Widget>[
-          _buildSearchView(),
-          new Expanded(
-            child: new Center(
-              child: new CircularProgressIndicator(),
-            ),
-          )
-        ],
-      ),);
+      return new Scaffold(
+        body: new Column(
+          children: <Widget>[
+            _buildSearchView(),
+            new Expanded(
+              child: new Center(
+                child: new CircularProgressIndicator(),
+              ),
+            )
+          ],
+        ),
+      );
     } else {
-      return new Scaffold(body: new Column(
-        children: <Widget>[
-          _buildSearchView(),
-        ],
-      ),);
+      return new Scaffold(
+        body: new Column(
+          children: <Widget>[
+            _buildSearchView(),
+          ],
+        ),
+      );
     }
   }
 
@@ -111,16 +127,16 @@ class SearchBodyState extends State<SearchBody> {
                   _isFailed = false;
                 });
                 http.htmlGetSearch((_html) {
-                    try {
-                     HtmlUtils.parseSearch(_html,(_cs){
-                       setState(() {
-                         _cartoons = _cs;
-                         _isHttpCompelete = true;
-                       });
-                     });
-                    } catch (e) {
-                      _isFailed = true;
-                    }
+                  try {
+                    HtmlUtils.parseSearch(_html, (_cs) {
+                      setState(() {
+                        _cartoons = _cs;
+                        _isHttpCompelete = true;
+                      });
+                    });
+                  } catch (e) {
+                    _isFailed = true;
+                  }
                 }, _searchText);
               })
         ],
