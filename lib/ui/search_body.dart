@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -45,14 +46,14 @@ class SearchBodyState extends State<SearchBody> {
                     return new GestureDetector(
                       onTap: () {
                         String url = _cartoons[i].url.replaceAll("/", "[");
-//                        if (url.contains("watch")) {
-//                          String json = jsonEncode(_cartoons[i]);
-//                          json = json.replaceAll("/", "]");
-//                          json = json.replaceAll("?", "");
-//                          Application.router.navigateTo(context, '/play/$json');
-//                        } else
-                        Application.router.navigateTo(context,
-                            '/detail/$url/${_cartoons[i].name}/${_cartoons[i].picture}');
+                        if (url.contains("watch")) {
+                          String json = jsonEncode(_cartoons[i]);
+                          json = json.replaceAll("/", "]");
+                          json = json.replaceAll("?", "");
+                          Application.router.navigateTo(context, '/play/$json');
+                        } else
+                          Application.router.navigateTo(context,
+                              '/detail/$url/${_cartoons[i].name}/${_cartoons[i].picture}');
                       },
                       child: new Column(
                         children: <Widget>[
@@ -126,18 +127,25 @@ class SearchBodyState extends State<SearchBody> {
                   _isHttpCompelete = false;
                   _isFailed = false;
                 });
-                http.htmlGetSearch((_html) {
-                  try {
-                    HtmlUtils.parseSearch(_html, (_cs) {
-                      setState(() {
-                        _cartoons = _cs;
-                        _isHttpCompelete = true;
+                runZoned((){
+                  http.htmlGetSearch((_html) {
+                    try {
+                      HtmlUtils.parseSearch(_html, (_cs) {
+                        setState(() {
+                          _cartoons = _cs;
+                          _isHttpCompelete = true;
+                        });
                       });
-                    });
-                  } catch (e) {
+                    } catch (e) {
+                      _isFailed = true;
+                    }
+                  }, _searchText);
+                },onError: (_error, _stack){
+                  setState(() {
                     _isFailed = true;
-                  }
-                }, _searchText);
+                  });
+                });
+
               })
         ],
       ),
