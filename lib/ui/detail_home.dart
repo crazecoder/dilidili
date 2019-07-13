@@ -49,12 +49,10 @@ class DetailHomeState extends State<DetailHome> {
             expandedHeight: MediaQuery.of(context).size.width * 3 / 4,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Center(
-                child: Text(
+              title:Text(
                   widget.name,
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 16),
                 ),
-              ),
               background: Stack(
                 children: <Widget>[
                   CachedNetworkImage(
@@ -106,6 +104,7 @@ class DetailHomeState extends State<DetailHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               new Container(
+                width: MediaQuery.of(context).size.width,
                 padding: new EdgeInsets.all(10.0),
                 child: new Text(
                   _cartoon.name,
