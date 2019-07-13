@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:dilidili/lib/library.dart';
 import 'package:dilidili/db/db_helper.dart';
@@ -41,10 +39,15 @@ class HistoryBodyState extends State<HistoryBody> {
                       child: new Row(
                         children: <Widget>[
                           new Container(
-                            padding: EdgeInsets.only(left: 10,right: 10,top: 5,bottom: 5),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             width: 80.0,
-                            child: new CachedNetworkImage(
-                                imageUrl: _cartoons[i].picture),
+                            child: _cartoons[i].picture == null ||
+                                    _cartoons[i].picture.isEmpty
+                                ? Container()
+                                : CachedNetworkImage(
+                                    imageUrl: _cartoons[i].picture,
+                                  ),
                           ),
                           new Expanded(
                               child: new Column(

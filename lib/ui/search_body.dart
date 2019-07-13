@@ -98,8 +98,11 @@ class SearchBodyState extends State<SearchBody> {
             },
           );
         },
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           prefixIcon: Icon(Icons.search),
+          suffixIcon: GestureDetector(child: Icon(Icons.delete_sweep),onTap: (){
+            _editingController.clear();
+          },),
           contentPadding: EdgeInsets.all(10),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(30)),
