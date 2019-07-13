@@ -42,22 +42,32 @@ class HistoryBodyState extends State<HistoryBody> {
                             padding: EdgeInsets.only(
                                 left: 10, right: 10, top: 5, bottom: 5),
                             width: 80.0,
+                            height: 80,
                             child: _cartoons[i].picture == null ||
                                     _cartoons[i].picture.isEmpty
-                                ? Container()
+                                ? Center(
+                                    child: Icon(Icons.error),
+                                  )
                                 : CachedNetworkImage(
+                                    width: 80.0,
+                                    height: 80,
                                     imageUrl: _cartoons[i].picture,
+                                    errorWidget: (_, _s, _o) =>
+                                        Icon(Icons.error),
+                                    fit: BoxFit.fitWidth,
                                   ),
                           ),
-                          new Expanded(
-                              child: new Column(
-                            children: <Widget>[
-                              new Text(_cartoons[i].name),
-                              new Text(_cartoons[i].episode == null
-                                  ? ""
-                                  : _cartoons[i].episode),
-                            ],
-                          ))
+                          new Container(
+                            width: MediaQuery.of(context).size.width - 80,
+                            child: new Column(
+                              children: <Widget>[
+                                new Text(_cartoons[i].name),
+                                new Text(_cartoons[i].episode == null
+                                    ? ""
+                                    : _cartoons[i].episode),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     );
