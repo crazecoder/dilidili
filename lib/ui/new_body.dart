@@ -54,10 +54,11 @@ class NewBodyState extends State<NewBody>
     SchedulerBinding.instance.addPostFrameCallback((_) {
       http.htmlGetHome((_htmlStr) {
         HtmlUtils.parseHome(_htmlStr, (_cartoons) {
-          setState(() {
-            cartoons = _cartoons;
-            isHttpComplete = true;
-          });
+          if (mounted)
+            setState(() {
+              cartoons = _cartoons;
+              isHttpComplete = true;
+            });
         });
       });
     });

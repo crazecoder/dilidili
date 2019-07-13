@@ -49,7 +49,12 @@ class DetailHomeState extends State<DetailHome> {
             expandedHeight: MediaQuery.of(context).size.width * 3 / 4,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(widget.name),
+              title: Center(
+                child: Text(
+                  widget.name,
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
               background: Stack(
                 children: <Widget>[
                   CachedNetworkImage(
@@ -77,8 +82,7 @@ class DetailHomeState extends State<DetailHome> {
             ),
           ),
           SliverList(
-            delegate: SliverChildListDelegate(getListWidget()
-                ),
+            delegate: SliverChildListDelegate(getListWidget()),
           )
         ],
       );
@@ -99,10 +103,14 @@ class DetailHomeState extends State<DetailHome> {
             Application.router.navigateTo(context, '/play/$json');
           },
           child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               new Container(
                 padding: new EdgeInsets.all(10.0),
-                child: new Text(_cartoon.name),
+                child: new Text(
+                  _cartoon.name,
+                  maxLines: 1,
+                ),
               ),
               new Divider(),
             ],
