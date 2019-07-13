@@ -54,25 +54,6 @@ class CategoryDetailBodyState extends State<CategoryDetailBody>
             .navigateTo(context, '/detail/$url/${cartoon.name}/$picture');
       },
       child: buildGridItem(cartoon),
-//      new Card(
-//        child: new Column(
-//          children: <Widget>[
-//            new Expanded(
-//              child: new CachedNetworkImage(
-//                imageUrl: cartoon.picture,
-//                placeholder: (context, str) => Center(
-//                  child: CircularProgressIndicator(),
-//                ),
-//                errorWidget: (_, _s, _o) => new Icon(Icons.error),
-//              ),
-//            ),
-//            new Text(
-//              cartoon.name,
-//              softWrap: true,
-//            ),
-//          ],
-//        ),
-//      ),
     );
   }
 
@@ -88,9 +69,9 @@ class CategoryDetailBodyState extends State<CategoryDetailBody>
               height: 16 * (MediaQuery.of(context).size.width / 2 - 5) / 11,
               fit: BoxFit.fill,
               imageUrl: cartoon.picture,
-              placeholder: (context, str) => Center(
-                child: CircularProgressIndicator(),
-              ),
+              // placeholder: (context, str) => Center(
+              //   child: CircularProgressIndicator(),
+              // ),
               errorWidget: (_, _s, _o) => new Icon(Icons.error),
             ),
             Flex(

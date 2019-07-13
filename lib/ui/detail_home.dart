@@ -26,10 +26,12 @@ class DetailHomeState extends State<DetailHome> {
     Application.key = _scaffoldKey;
     return new Scaffold(
       key: _scaffoldKey,
-      appBar: new AppBar(
-        title: new Text(widget.name),
-        centerTitle: true,
-      ),
+      appBar: isFailed
+          ? new AppBar(
+              title: new Text(widget.name),
+              centerTitle: true,
+            )
+          : null,
       body: _buildHome(),
     );
   }
@@ -41,54 +43,43 @@ class DetailHomeState extends State<DetailHome> {
       );
     }
     if (isCompelete)
-      return new Column(
-        children: <Widget>[
-          new Row(
-            children: <Widget>[
-              new Flexible(
-                  flex: 1,
-                  child: new Container(
-                    alignment: Alignment.topLeft,
-                    child: new CachedNetworkImage(
-                      imageUrl: widget.picture.replaceAll("[", "/"),
-                      placeholder: (_, s) => new Center(
-                        child: new CircularProgressIndicator(),
+      return CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            expandedHeight: MediaQuery.of(context).size.width * 3 / 4,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(widget.name),
+              background: Stack(
+                children: <Widget>[
+                  CachedNetworkImage(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width * 3 / 4,
+                    fit: BoxFit.fitWidth,
+                    imageUrl: widget.picture.replaceAll("[", "/"),
+                    // placeholder: (_, s) => new Center(
+                    //   child: new CircularProgressIndicator(),
+                    // ),
+                    errorWidget: (_, _s, _o) => new Icon(Icons.error),
+                  ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        // begin: Alignment(0.0, -1),
+                        // end: Alignment(0.0, -0.4),
+                        colors: <Color>[Color(0x60000000), Color(0x00000000)],
                       ),
-                      errorWidget: (_, _s, _o) => new Icon(Icons.error),
                     ),
-                  )),
-              new Flexible(
-                  flex: 4,
-                  child: new Container(
-                    padding: new EdgeInsets.only(left: 10.0),
-                    child: new Text(widget.name),
-                  ))
-            ],
-          ),
-          new Expanded(
-            child: new ListView.builder(
-              itemCount: _cartoons.length,
-              itemBuilder: (_, i) {
-                return new GestureDetector(
-                    onTap: () {
-                      _cartoons[i].picture = widget.picture;
-                      String json = jsonEncode(_cartoons[i]);
-                      json = json.replaceAll("/", "]");
-                      json = json.replaceAll("?", "");
-                      Application.router.navigateTo(context, '/play/$json');
-                    },
-                    child: new Column(
-                      children: <Widget>[
-                        new Container(
-                          padding: new EdgeInsets.all(10.0),
-                          child: new Text(_cartoons[i].name),
-                        ),
-                        new Divider(),
-                      ],
-                    ));
-              },
+                  ),
+                ],
+                fit: StackFit.expand,
+              ),
             ),
           ),
+          SliverList(
+            delegate: SliverChildListDelegate(getListWidget()
+                ),
+          )
         ],
       );
     else
@@ -97,9 +88,31 @@ class DetailHomeState extends State<DetailHome> {
       );
   }
 
+  List<Widget> getListWidget() {
+    var _widgets = <Widget>[];
+    _cartoons.forEach((_cartoon) => _widgets.add(GestureDetector(
+          onTap: () {
+            _cartoon.picture = widget.picture;
+            String json = jsonEncode(_cartoon);
+            json = json.replaceAll("/", "]");
+            json = json.replaceAll("?", "");
+            Application.router.navigateTo(context, '/play/$json');
+          },
+          child: new Column(
+            children: <Widget>[
+              new Container(
+                padding: new EdgeInsets.all(10.0),
+                child: new Text(_cartoon.name),
+              ),
+              new Divider(),
+            ],
+          ),
+        )));
+    return _widgets;
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     String url = widget.url.replaceAll("[", "/");
     http.htmlGetCategoryDetailHome(url, sfn: (_cs) {
@@ -112,22 +125,5 @@ class DetailHomeState extends State<DetailHome> {
         isFailed = true;
       });
     });
-//    http.htmlGetCategoryDetail((_h) {
-//        try {
-//          HtmlUtils.parseDetailList(_h,(_cs){
-//            setState(() {
-//              _cartoons = _cs;
-//              isCompelete = true;
-//            });
-//          });
-//        } catch (e) {
-//          isFailed = true;
-//        }
-//    }, url);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

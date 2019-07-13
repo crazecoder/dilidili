@@ -7,6 +7,8 @@ import 'package:dilidili/utils/html_util.dart';
 import 'package:dilidili/bean/video.dart';
 import 'dart:convert';
 
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 //最近更新
 class NewBody extends StatefulWidget {
   @override
@@ -27,13 +29,12 @@ class NewBodyState extends State<NewBody>
     if (isHttpComplete) {
       return new Scaffold(
         key: _scaffoldKey,
-        body: new GridView.builder(
+        body: new StaggeredGridView.countBuilder(
           itemCount: cartoons.length,
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-//        mainAxisSpacing: 4.0,
+          staggeredTileBuilder: (_index) => StaggeredTile.fit(2),
+          crossAxisCount: 4,
+          //  mainAxisSpacing: 4.0,
 //        crossAxisSpacing: 4.0,
-          padding: const EdgeInsets.all(4.0),
 //        childAspectRatio: 1.3,
           itemBuilder: (_, i) {
             return _buildGridItem(cartoons[i]);
@@ -52,46 +53,72 @@ class NewBodyState extends State<NewBody>
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       http.htmlGetHome((_htmlStr) {
-          HtmlUtils.parseHome(_htmlStr,(_cartoons){
-            setState(() {
-              cartoons = _cartoons;
-              isHttpComplete = true;
-            });
+        HtmlUtils.parseHome(_htmlStr, (_cartoons) {
+          setState(() {
+            cartoons = _cartoons;
+            isHttpComplete = true;
           });
+        });
       });
     });
   }
 
   Widget _buildGridItem(Cartoon cartoon) {
-    return new GestureDetector(
-      onTap: () {
-        String json = jsonEncode(cartoon);
-        json = json.replaceAll("/", "]");
-        Application.router.navigateTo(context, '/play/$json');
-      },
-      child: new Card(
-        child: new Column(
+    return Container(
+      width: MediaQuery.of(context).size.width / 2 - 5,
+      height: 117 * (MediaQuery.of(context).size.width / 2 - 5) / 166,
+      child: new GestureDetector(
+        onTap: () {
+          String json = jsonEncode(cartoon);
+          json = json.replaceAll("/", "]");
+          Application.router.navigateTo(context, '/play/$json');
+        },
+        child: Stack(
           children: <Widget>[
-            new Expanded(
-              child: new CachedNetworkImage(
-                imageUrl: cartoon.picture,
-                placeholder: (_,_s)=>new Center(
-                  child: new CircularProgressIndicator(),
+            new CachedNetworkImage(
+              imageUrl: cartoon.picture,
+              width: MediaQuery.of(context).size.width / 2 - 5,
+              height: 117 * (MediaQuery.of(context).size.width / 2 - 5) / 166,
+              fit: BoxFit.fill,
+              // placeholder: (_, _s) => new Center(
+              //   child: new CircularProgressIndicator(),
+              // ),
+              errorWidget: (_, _s, _o) => new Icon(Icons.error),
+            ),
+            Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Opacity(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 5,
+                    child: Center(
+                      child: Text(
+                        cartoon.name,
+                        softWrap: true,
+                        maxLines: 1,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    color: Colors.black,
+                  ),
+                  opacity: 0.5,
                 ),
-                errorWidget: (_,_s,_o)=>new Icon(Icons.error),
+              ],
+            ),
+            Container(
+              padding: EdgeInsets.all(2),
+              child: Text(
+                cartoon.episode,
+                softWrap: true,
+                style: TextStyle(color: Colors.white),
               ),
-            ),
-            new Text(
-              cartoon.name,
-              softWrap: true,
-            ),
-            new Text(
-              cartoon.episode,
-              softWrap: true,
+              color: Colors.green,
             ),
           ],
         ),
       ),
+      margin: const EdgeInsets.all(4.0),
     );
   }
 
