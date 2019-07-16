@@ -86,8 +86,13 @@ class DetailHomeState extends State<DetailHome> {
         ],
       );
     else
-      return new Center(
-        child: new CircularProgressIndicator(),
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.name),
+        ),
+        body: Center(
+          child: new CircularProgressIndicator(),
+        ),
       );
   }
 
@@ -126,7 +131,9 @@ class DetailHomeState extends State<DetailHome> {
     _picture = widget.picture?.replaceAll("[", "/");
     http.htmlGetCategoryDetailHome(url, sfn: (List<Cartoon> _cs) {
       setState(() {
-        if (widget.picture == null || widget.picture.isEmpty|| widget.picture == "null") {
+        if (widget.picture == null ||
+            widget.picture.isEmpty ||
+            widget.picture == "null") {
           _picture = _cs[0].picture;
         }
         _cartoons = _cs;

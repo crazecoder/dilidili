@@ -24,7 +24,7 @@ class HistoryBodyState extends State<HistoryBody> {
         future: DbHelper().getCartoon(),
         builder: (_, AsyncSnapshot<List<Cartoon>> snapshot) {
           if (snapshot.hasData) {
-            List<Cartoon> _cartoons = snapshot.data;
+            List<Cartoon> _cartoons = snapshot.data.reversed.toList();
             return new Scaffold(
               key: _scaffoldKey,
               body: new ListView.builder(
@@ -60,6 +60,7 @@ class HistoryBodyState extends State<HistoryBody> {
                           new Container(
                             width: MediaQuery.of(context).size.width - 80,
                             child: new Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 new Text(_cartoons[i].name),
                                 new Text(_cartoons[i].episode == null
