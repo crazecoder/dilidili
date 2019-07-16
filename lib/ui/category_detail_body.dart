@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:dilidili/lib/library.dart';
 import 'package:dilidili/http.dart' as http;
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class CategoryDetailBody extends StatefulWidget {
   final String url;
@@ -27,10 +26,12 @@ class CategoryDetailBodyState extends State<CategoryDetailBody>
   @override
   Widget build(BuildContext context) {
     if (isHttpComplete && widget.isShow) {
-      return new StaggeredGridView.countBuilder(
+      return GridView.builder(
         itemCount: cartoons.length,
-        crossAxisCount: 4,
-        staggeredTileBuilder: (_index) => StaggeredTile.fit(2),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 11 / 16,
+        ),
 //        mainAxisSpacing: 4.0,
 //        crossAxisSpacing: 4.0,
 //        childAspectRatio: 1.3,
@@ -58,8 +59,8 @@ class CategoryDetailBodyState extends State<CategoryDetailBody>
   }
 
   Widget buildGridItem(Cartoon cartoon) => Container(
-        width: MediaQuery.of(context).size.width / 2 - 5,
-        height: 16 * (MediaQuery.of(context).size.width / 2 - 5) / 11,
+        // width: MediaQuery.of(context).size.width / 2 - 5,
+        // height: 16 * (MediaQuery.of(context).size.width / 2 - 5) / 11,
         margin: EdgeInsets.all(5),
 //        padding: EdgeInsets.all(5),
         child: Stack(
@@ -72,7 +73,9 @@ class CategoryDetailBodyState extends State<CategoryDetailBody>
               // placeholder: (context, str) => Center(
               //   child: CircularProgressIndicator(),
               // ),
-              errorWidget: (_, _s, _o) => new Icon(Icons.error),
+              errorWidget: (_, _s, _o) => Center(
+                child: Icon(Icons.error),
+              ),
             ),
             Flex(
               direction: Axis.vertical,

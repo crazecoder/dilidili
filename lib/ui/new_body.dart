@@ -7,8 +7,6 @@ import 'package:dilidili/utils/html_util.dart';
 import 'package:dilidili/bean/video.dart';
 import 'dart:convert';
 
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-
 //最近更新
 class NewBody extends StatefulWidget {
   @override
@@ -29,10 +27,14 @@ class NewBodyState extends State<NewBody>
     if (isHttpComplete) {
       return new Scaffold(
         key: _scaffoldKey,
-        body: new StaggeredGridView.countBuilder(
+        body: GridView.builder(
           itemCount: cartoons.length,
-          staggeredTileBuilder: (_index) => StaggeredTile.fit(2),
-          crossAxisCount: 4,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 166 / 117,
+          ),
+          // staggeredTileBuilder: (_index) => StaggeredTile.fit(2),
+          // crossAxisCount: 4,
           //  mainAxisSpacing: 4.0,
 //        crossAxisSpacing: 4.0,
 //        childAspectRatio: 1.3,
@@ -66,8 +68,8 @@ class NewBodyState extends State<NewBody>
 
   Widget _buildGridItem(Cartoon cartoon) {
     return Container(
-      width: MediaQuery.of(context).size.width / 2 - 5,
-      height: 117 * (MediaQuery.of(context).size.width / 2 - 5) / 166,
+      // width: MediaQuery.of(context).size.width / 2 - 5,
+      // height: 117 * (MediaQuery.of(context).size.width / 2 - 5) / 166,
       child: new GestureDetector(
         onTap: () {
           String json = jsonEncode(cartoon);
@@ -84,7 +86,9 @@ class NewBodyState extends State<NewBody>
               // placeholder: (_, _s) => new Center(
               //   child: new CircularProgressIndicator(),
               // ),
-              errorWidget: (_, _s, _o) => new Icon(Icons.error),
+              errorWidget: (_, _s, _o) => Center(
+                child: Icon(Icons.error),
+              ),
             ),
             Flex(
               direction: Axis.vertical,
