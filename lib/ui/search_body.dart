@@ -138,6 +138,7 @@ class SearchBodyState extends State<SearchBody> {
                         crossAxisAlignment:CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
+                            width: MediaQuery.of(context).size.width,
                             padding: EdgeInsets.all(10.0),
                             child: Text(_cartoons[i].name),
                           ),

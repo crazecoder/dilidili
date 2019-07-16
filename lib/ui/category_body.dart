@@ -10,9 +10,10 @@ class CategoryBody extends StatefulWidget {
   State<StatefulWidget> createState() => new CategoryBodyState();
 }
 
-class CategoryBodyState
-    extends State<CategoryBody> with AutomaticKeepAliveClientMixin<CategoryBody>,TickerProviderStateMixin<CategoryBody>
-{
+class CategoryBodyState extends State<CategoryBody>
+    with
+        AutomaticKeepAliveClientMixin<CategoryBody>,
+        TickerProviderStateMixin<CategoryBody> {
   static bool _keepAlive = false;
   bool isHttpComplete = false;
   var categorys = <Category>[];
@@ -54,17 +55,18 @@ class CategoryBodyState
     super.initState();
     http.htmlGetCategory((_html) {
       HtmlUtils.parseCategory(_html, (_categorys) {
-        setState(() {
-          categorys = _categorys;
-          // var category = new Category(name: "肉番", url: "/roufan/");
-          // categorys.add(category);
-          isHttpComplete = true;
-          _controller  = new TabController(length: categorys.length, vsync: this);
-        });
+        if (mounted)
+          setState(() {
+            categorys = _categorys;
+            // var category = new Category(name: "肉番", url: "/roufan/");
+            // categorys.add(category);
+            isHttpComplete = true;
+            _controller =
+                new TabController(length: categorys.length, vsync: this);
+          });
       });
     });
     SchedulerBinding.instance.addPostFrameCallback((_) {
-
       setState(() {
         _keepAlive = true;
       });

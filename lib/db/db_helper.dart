@@ -48,7 +48,7 @@ class DbHelper {
     await _initDataBase();
     var cartoons = <Cartoon>[];
     if (db.isOpen) {
-      List<Map> maps = await db.query(tableName);
+      List<Map> maps = await db.query(tableName,);
       if (maps.length > 0) {
         maps.forEach((map) {
           Cartoon cartoon = new Cartoon(
@@ -84,6 +84,12 @@ class DbHelper {
       print(e);
     }
   }
+
+  Future clear() async{
+    await _initDataBase();
+    await db.rawQuery("DELETE FROM $tableName");
+  }
+
 
   Future close() async => db.close();
 }

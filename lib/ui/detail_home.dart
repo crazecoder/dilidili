@@ -100,7 +100,6 @@ class DetailHomeState extends State<DetailHome> {
     var _widgets = <Widget>[];
     _cartoons.forEach((_cartoon) => _widgets.add(GestureDetector(
           onTap: () {
-            _cartoon.picture = widget.picture;
             String json = jsonEncode(_cartoon);
             json = json.replaceAll("/", "]");
             json = json.replaceAll("?", "");
@@ -130,19 +129,21 @@ class DetailHomeState extends State<DetailHome> {
     String url = widget.url.replaceAll("[", "/");
     _picture = widget.picture?.replaceAll("[", "/");
     http.htmlGetCategoryDetailHome(url, sfn: (List<Cartoon> _cs) {
-      setState(() {
-        if (widget.picture == null ||
-            widget.picture.isEmpty ||
-            widget.picture == "null") {
-          _picture = _cs[0].picture;
-        }
-        _cartoons = _cs;
-        isCompelete = true;
-      });
+      if (mounted)
+        setState(() {
+          if (widget.picture == null ||
+              widget.picture.isEmpty ||
+              widget.picture == "null") {
+            _picture = _cs[0].picture;
+          }
+          _cartoons = _cs;
+          isCompelete = true;
+        });
     }, ffn: () {
-      setState(() {
-        isFailed = true;
-      });
+      if (mounted)
+        setState(() {
+          isFailed = true;
+        });
     });
   }
 }
