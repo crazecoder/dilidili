@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:dilidili/lib/library.dart';
-import 'package:dilidili/utils/my_print.dart';
 
 class DbHelper {
   Database db;
@@ -19,7 +17,7 @@ class DbHelper {
   final String columnUrl = "cartoon_url";
   final String columnEpisode = "cartoon_episode";
 
-  factory DbHelper(){
+  factory DbHelper() {
     return _dbHelper;
   }
 
@@ -48,17 +46,19 @@ class DbHelper {
 
   Future<List<Cartoon>> getCartoon() async {
     await _initDataBase();
-    List<Map> maps = await db.query(tableName);
     var cartoons = <Cartoon>[];
-    if (maps.length > 0) {
-      maps.forEach((map) {
-        Cartoon cartoon = new Cartoon(
-            url: map[columnUrl],
-            name: map[columnName],
-            picture: map[columnPicture],
-            episode: map[columnEpisode]);
-        cartoons.add(cartoon);
-      });
+    if (db.isOpen) {
+      List<Map> maps = await db.query(tableName);
+      if (maps.length > 0) {
+        maps.forEach((map) {
+          Cartoon cartoon = new Cartoon(
+              url: map[columnUrl],
+              name: map[columnName],
+              picture: map[columnPicture],
+              episode: map[columnEpisode]);
+          cartoons.add(cartoon);
+        });
+      }
     }
     return cartoons;
   }
@@ -76,9 +76,7 @@ class DbHelper {
           columns: [columnUrl],
           where: "$columnUrl = ?",
           whereArgs: [cartoon.url]);
-      if (maps.isNotEmpty) {
-        await db.update(tableName, map);
-      } else {
+      if (maps.isEmpty) {
         await db.insert(tableName, map);
       }
       callback();

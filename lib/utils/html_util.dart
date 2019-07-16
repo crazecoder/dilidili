@@ -68,25 +68,37 @@ class HtmlUtils {
   static List<Cartoon> parseCategoryDetailHome(String html) {
     var cartoons = <Cartoon>[];
     var doc = parse(html);
-    List<Element> els =
-        doc.documentElement.getElementsByClassName("swiper-slide");
-    if (els.length == 0) return cartoons;
-    List<Element> as = els?.first.getElementsByTagName("li");
+    // List<Element> els =
+    //     doc.documentElement.getElementsByClassName("swiper-slide");
+    // List<Element> picContain =
+    //     doc.documentElement.getElementsByClassName("aside_cen2");
+    Element img = doc.documentElement.getElementsByTagName("img")?.first;
+    var picture;
+    if (img != null) {
+      picture = img.attributes.values.elementAt(0);
+    }
+    // if (els.length == 0) return cartoons;
+    List<Element> as = doc.documentElement.getElementsByTagName("li");
     log('${as.length}');
     as.forEach((element) {
-//      List<Element> dts = element.getElementsByTagName("a");
-      Element a = element.getElementsByTagName("a").first;
-      String url = a
-          .attributes
-          .values
-          .elementAt(0);
-      Element dds = a.getElementsByTagName("em").first;
-      String name = dds.innerHtml;
-      name = name.replaceAll(RegExp("<span>(.+)<\/span>"), "");
-//      Element img = a.getElementsByTagName("img").first;
-//      var picture = img.attributes.values.elementAt(0);
-      Cartoon cartoon = new Cartoon(url: url, name: name);
-      cartoons.add(cartoon);
+      // List<Element> dts = element.getElementsByTagName("a");
+      List<Element> as = element.getElementsByTagName("a");
+      if (as != null && as.isNotEmpty) {
+        as.forEach((a) {
+          String url = a.attributes.values.elementAt(0);
+          List<Element> ems = a.getElementsByTagName("em");
+          if (ems != null && ems.isNotEmpty) {
+            Element dds = ems.first;
+            String name = dds.innerHtml;
+            name = name.replaceAll(RegExp("<span>(.+)<\/span>"), "");
+            // Element img = a.getElementsByTagName("img").first;
+            //
+            Cartoon cartoon =
+                new Cartoon(url: url, name: name, picture: picture);
+            cartoons.add(cartoon);
+          }
+        });
+      }
     });
     return cartoons;
   }

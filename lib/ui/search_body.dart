@@ -135,6 +135,7 @@ class SearchBodyState extends State<SearchBody> {
                               '/detail/$url/${_cartoons[i].name}/${_cartoons[i].picture}');
                       },
                       child: Column(
+                        crossAxisAlignment:CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             padding: EdgeInsets.all(10.0),

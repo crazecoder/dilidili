@@ -19,6 +19,7 @@ class DetailHomeState extends State<DetailHome> {
   var _cartoons = <Cartoon>[];
   bool isCompelete = false;
   bool isFailed = false;
+  var _picture;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   @override
@@ -49,17 +50,17 @@ class DetailHomeState extends State<DetailHome> {
             expandedHeight: MediaQuery.of(context).size.width * 3 / 4,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title:Text(
-                  widget.name,
-                  style: TextStyle(fontSize: 16),
-                ),
+              title: Text(
+                widget.name,
+                style: TextStyle(fontSize: 16),
+              ),
               background: Stack(
                 children: <Widget>[
                   CachedNetworkImage(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width * 3 / 4,
                     fit: BoxFit.fitWidth,
-                    imageUrl: widget.picture.replaceAll("[", "/"),
+                    imageUrl: _picture,
                     // placeholder: (_, s) => new Center(
                     //   child: new CircularProgressIndicator(),
                     // ),
@@ -122,8 +123,12 @@ class DetailHomeState extends State<DetailHome> {
   void initState() {
     super.initState();
     String url = widget.url.replaceAll("[", "/");
-    http.htmlGetCategoryDetailHome(url, sfn: (_cs) {
+    _picture = widget.picture?.replaceAll("[", "/");
+    http.htmlGetCategoryDetailHome(url, sfn: (List<Cartoon> _cs) {
       setState(() {
+        if (widget.picture == null || widget.picture.isEmpty|| widget.picture == "null") {
+          _picture = _cs[0].picture;
+        }
         _cartoons = _cs;
         isCompelete = true;
       });
