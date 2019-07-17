@@ -5,6 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 
 class HistoryBody extends StatefulWidget {
+  final GlobalKey<HistoryBodyState> key;
+
+  HistoryBody({this.key});
   @override
   State<StatefulWidget> createState() => new HistoryBodyState();
 }
@@ -20,23 +23,28 @@ class HistoryBodyState extends State<HistoryBody> {
   @override
   Widget build(BuildContext context) {
     Application.key = _scaffoldKey;
-    return new FutureBuilder(
+    return FutureBuilder(
         future: DbHelper().getCartoon(),
         builder: (_, AsyncSnapshot<List<Cartoon>> snapshot) {
-          if (snapshot.hasData) {
+          if (!snapshot.hasData) {
+            return new Center(
+              child: new CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData && snapshot.data.length > 0) {
             List<Cartoon> _cartoons = snapshot.data.reversed.toList();
             return new Scaffold(
               key: _scaffoldKey,
-              body: new ListView.builder(
+              body: ListView.builder(
                   itemCount: _cartoons.length,
                   itemBuilder: (_, i) {
-                    return new GestureDetector(
+                    return GestureDetector(
                       onTap: () {
                         String json = jsonEncode(_cartoons[i]);
                         json = json.replaceAll("/", "]");
                         Application.router.navigateTo(context, '/play/$json');
                       },
-                      child: new Row(
+                      child: Row(
                         children: <Widget>[
                           new Container(
                             padding: EdgeInsets.only(
@@ -52,13 +60,13 @@ class HistoryBodyState extends State<HistoryBody> {
                                     width: 80.0,
                                     height: 80,
                                     imageUrl: _cartoons[i].picture,
-                                    errorWidget: (_, _s, _o) =>
-                                        Icon(Icons.error),
+                                    errorWidget: (_, _s, _o) => Center(
+                                      child: Icon(Icons.error),
+                                    ),
                                     fit: BoxFit.fitWidth,
                                   ),
                           ),
-                          new Container(
-                            width: MediaQuery.of(context).size.width - 80,
+                          Expanded(
                             child: new Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -80,6 +88,10 @@ class HistoryBodyState extends State<HistoryBody> {
             );
           }
         });
+  }
+
+  void clearList() {
+    setState(() {});
   }
 
   @override

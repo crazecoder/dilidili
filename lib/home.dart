@@ -1,3 +1,4 @@
+import 'package:dilidili/db/db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:dilidili/application.dart';
 import 'ui/new_body.dart';
@@ -14,6 +15,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   int _index = 0;
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+  static final GlobalKey<HistoryBodyState> _historyKey = new GlobalKey();
 
   static var titles = <Text>[
     new Text("首页"),
@@ -31,7 +33,9 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     new CategoryBody(),
     new NewBody(),
     new SearchBody(),
-    new HistoryBody(),
+    new HistoryBody(
+      key: _historyKey,
+    ),
   ];
 
   @override
@@ -90,6 +94,20 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   AppBar _buildAppBar() {
     return AppBar(
+      actions: <Widget>[
+        _index == 3
+            ? GestureDetector(
+                child: Container(
+                  child: Icon(Icons.delete_sweep),
+                  padding: EdgeInsets.only(right: 10),
+                ),
+                onTap: () {
+                  DbHelper().clear();
+                  _historyKey.currentState.clearList();
+                },
+              )
+            : Container(),
+      ],
       centerTitle: true,
       title: titles[_index],
     );
