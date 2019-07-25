@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dilidili/bean/bean.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:dilidili/lib/library.dart';
 
 class DbHelper {
   Database db;

@@ -1,19 +1,17 @@
 import 'dart:async';
 
+import '../bean/bean.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-import 'my_print.dart';
-import 'package:dilidili/lib/library.dart';
 import '../constant.dart';
 
 class HtmlUtils {
-  static Future<Null> parseHome(String homeHtml, Function fn) async {
+  static Future<List<Cartoon>> parseHome(String homeHtml) async {
     var cartoons = <Cartoon>[];
     var doc = parse(homeHtml);
     List<Element> els =
         doc.documentElement.getElementsByClassName("book\ article");
     List<Element> as = els?.first.getElementsByTagName("a");
-    log('${as.length}');
     as.forEach((element) {
       List<Element> figures = element.getElementsByTagName("figure");
       Element figcaption =
@@ -23,8 +21,8 @@ class HtmlUtils {
       String name = ps.first.innerHtml;
       String episode = ps.last.innerHtml;
       Element e = figures.first.getElementsByClassName("coverImg").first;
-      Map<Object, String> attributes = e.attributes as Map<Object, String>;
-      String style = attributes.values.last;
+      // Map<Object, String> attributes = e.attributes as Map<Object, String>;
+      String style = e.attributes.values.last;
       style.replaceAll(")", "");
       var picture = style.split("(").last;
       picture = picture.split(");").first;
@@ -32,7 +30,7 @@ class HtmlUtils {
           new Cartoon(url: url, picture: picture, name: name, episode: episode);
       cartoons.add(cartoon);
     });
-    await fn(cartoons);
+    return cartoons;
   }
 
 //  static Future<List<Cartoon>> parseCategoryDetail(String homeHtml) async {
@@ -45,7 +43,6 @@ class HtmlUtils {
         doc.documentElement.getElementsByClassName("anime_list");
     if (els.length == 0) return cartoons;
     List<Element> as = els?.first.getElementsByTagName("dl");
-    log('${as.length}');
     as.forEach((element) {
       List<Element> dts = element.getElementsByTagName("dt");
       Element img = dts.first.getElementsByTagName("img").first;
@@ -79,7 +76,6 @@ class HtmlUtils {
     }
     // if (els.length == 0) return cartoons;
     List<Element> as = doc.documentElement.getElementsByTagName("li");
-    log('${as.length}');
     as.forEach((element) {
       // List<Element> dts = element.getElementsByTagName("a");
       List<Element> as = element.getElementsByTagName("a");
@@ -103,7 +99,7 @@ class HtmlUtils {
     return cartoons;
   }
 
-  static Future<Null> parseCategory(String html, Function fn) async {
+  static Future<List<Category>> parseCategory(String html) async {
     var categorys = <Category>[];
     var doc = parse(html);
     List<Element> tagbox = doc.documentElement.getElementsByClassName("tagbox");
@@ -116,7 +112,7 @@ class HtmlUtils {
       Category category = new Category(url: url, name: name);
       categorys.add(category);
     });
-    await fn(categorys);
+    return categorys;
   }
 
   static Future<Null> parseDetailList(String html, Function fn) async {
@@ -159,45 +155,34 @@ class HtmlUtils {
     await fn(cartoons);
   }
 
-  static Future<Null> parseSearch(String html, Function fn) async {
+  static Future<List<Cartoon>> parseSearch(String html) async {
     var cartoons = <Cartoon>[];
     var doc = parse(html);
     Element results = doc.getElementById("results");
     List<Element> clears = results.getElementsByClassName("result\ f\ s0");
-    if (clears.isEmpty) {
-      fn(cartoons);
-      return;
+    if (clears.isNotEmpty) {
+      clears.forEach((element) {
+        Element h3 = element.getElementsByTagName("h3").first;
+        Element a = h3.getElementsByTagName("a").first;
+        var name = a.innerHtml;
+        name = name.replaceAll("<em>", "");
+        name = name.replaceAll("</em>", "");
+        var url = a.attributes.values.elementAt(2);
+        if (url.contains(ConstantValue.URL)) {
+          url = url.replaceAll(ConstantValue.URL, "");
+          Cartoon value = new Cartoon(url: url, name: name);
+          cartoons.add(value);
+        }
+      });
     }
-    clears.forEach((element) {
-      Element h3 = element.getElementsByTagName("h3").first;
-      Element a = h3.getElementsByTagName("a").first;
-      var name = a.innerHtml;
-      name = name.replaceAll("<em>", "");
-      name = name.replaceAll("</em>", "");
-      var url = a.attributes.values.elementAt(2);
-      if (url.contains(ConstantValue.URL)) {
-        url = url.replaceAll(ConstantValue.URL, "");
-        Cartoon value = new Cartoon(url: url, name: name);
-        cartoons.add(value);
-      }
-    });
-    await fn(cartoons);
+    return cartoons;
   }
 
-  static Future<Null> parsePlay(
-      String playHtml, Function sfn, Function ffn) async {
-    String url = "";
-    try {
-      var doc = parse(playHtml);
-      List<Element> els =
-          doc.documentElement.getElementsByClassName("player_main");
-      List<Element> as = els?.first.getElementsByTagName("iframe");
-      url = as.first.attributes.values.elementAt(0);
-      log(url);
-      await sfn(url);
-    } catch (e) {
-      log(e);
-      await ffn();
-    }
+  static Future<String> parsePlay(String playHtml) async {
+    var doc = parse(playHtml);
+    List<Element> els =
+        doc.documentElement.getElementsByClassName("player_main");
+    List<Element> as = els?.first?.getElementsByTagName("iframe");
+    return as.first.attributes.values.elementAt(0);
   }
 }

@@ -1,86 +1,65 @@
 import 'dart:async';
 
+import './bean/bean.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http_client/console.dart';
-import 'package:dilidili/utils/my_print.dart';
 import 'utils/html_util.dart';
-import 'lib/my_isolate.dart';
 import 'constant.dart';
 
-void htmlGetHome(HttpCallback callback) async {
+Future<String> htmlGetHome() async {
   var _url = "${ConstantValue.URL}/zxgx/?1";
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
-  log(textContent);
-  callback(textContent);
   await client.close();
+  return textContent;
 }
 
-void htmlGetCategory(HttpCallback callback) async {
+Future<String> htmlGetCategory() async {
   var _url = "${ConstantValue.URL}/tvdh/?1";
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
-  log(textContent);
-  callback(textContent);
   await client.close();
+  return textContent;
 }
 
-Future<Null> htmlGetCategoryDetail(String url,
-    {Function sfn, Function ffn}) async {
+Future<List<Cartoon>> htmlGetCategoryDetail(String url) async {
   var _url = ConstantValue.URL + url;
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
-  log(textContent);
   var cartoons = await compute(HtmlUtils.parseCategoryDetail, textContent);
-  if (cartoons.isEmpty) {
-    ffn();
-  } else
-    sfn(cartoons);
 
-//  callback(textContent);
-//  await client.close();
+ await client.close();
+ return cartoons;
 }
 
-Future<Null> htmlGetCategoryDetailHome(String url,
-    {Function sfn, Function ffn}) async {
+Future<List<Cartoon>> htmlGetCategoryDetailHome(String url) async {
   var _url = ConstantValue.URL + url;
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
-  log(textContent);
-  var cartoons = await compute(HtmlUtils.parseCategoryDetailHome, textContent);
-  if (cartoons.isEmpty) {
-    ffn();
-  } else
-    sfn(cartoons);
-
+  return await compute(HtmlUtils.parseCategoryDetailHome, textContent);
 //  callback(textContent);
 //  await client.close();
 }
 
-void htmlGetPlay(HttpCallback callback, String _url) async {
-  log(_url);
+Future<String> htmlGetPlay(String _url) async {
   final client = new ConsoleClient();
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
-  log(textContent);
-  callback(textContent);
-  await client.close();
+  return textContent;
 }
 
-void htmlGetSearch(HttpCallback callback, String _name) async {
+Future<String> htmlGetSearch(String _name) async {
   var _url =
       "http://zhannei.baidu.com/cse/site?kwtype=0&q=$_name&stp=1&ie=utf8&src=zz&site=www.dilidili.name&cc=www.dilidili.name&rg=1";
-//  var _url = "http://zhannei.baidu.com/cse/site?q=$_name&click=1&cc=www.dilidili.name&s=&nsid=";
   final client = new ConsoleClient();
-  log(_url);
   final rs = await client.send(new Request('GET', _url));
   final textContent = await rs.readAsString();
-  log(textContent);
-  callback(textContent);
   await client.close();
+  return textContent;
 }
 
 typedef void HttpCallback(String html);

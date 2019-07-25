@@ -1,40 +1,29 @@
-import 'package:flutter/material.dart';
-import 'package:dilidili/lib/library.dart';
-import 'package:dilidili/db/db_helper.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 
-class HistoryBody extends StatefulWidget {
-  final GlobalKey<HistoryBodyState> key;
+import 'package:dilidili/bean/bean.dart';
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dilidili/blocs/blocs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../application.dart';
 
-  HistoryBody({this.key});
-  @override
-  State<StatefulWidget> createState() => new HistoryBodyState();
-}
+class HistoryBody extends StatelessWidget {
+  final HistoryBloc bloc;
 
-class HistoryBodyState extends State<HistoryBody> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+  HistoryBody({this.bloc});
   @override
   Widget build(BuildContext context) {
-    Application.key = _scaffoldKey;
-    return FutureBuilder(
-        future: DbHelper().getCartoon(),
-        builder: (_, AsyncSnapshot<List<Cartoon>> snapshot) {
-          if (!snapshot.hasData) {
+    return BlocBuilder<HistoryEvent, HistoryState>(
+      bloc:bloc..dispatch(HistoryLoadEvent()),
+      builder: (_, _state) {
+         if (_state is InitialHistoryState){
             return new Center(
               child: new CircularProgressIndicator(),
             );
           }
-          if (snapshot.hasData && snapshot.data.length > 0) {
-            List<Cartoon> _cartoons = snapshot.data.reversed.toList();
+          if(_state is HistoryLoadedState) {
+            List<Cartoon> _cartoons = _state.cartoons.reversed.toList();
             return new Scaffold(
-              key: _scaffoldKey,
               body: ListView.builder(
                   itemCount: _cartoons.length,
                   itemBuilder: (_, i) {
@@ -82,21 +71,14 @@ class HistoryBodyState extends State<HistoryBody> {
                     );
                   }),
             );
-          } else {
+          } 
+          if(_state is HistoryEmptyState) {
             return new Center(
               child: new Text("暂无记录"),
             );
           }
-        });
-  }
-
-  void clearList() {
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    DbHelper().close();
-    super.dispose();
+      },
+    );
   }
 }
+

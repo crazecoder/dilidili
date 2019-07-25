@@ -1,72 +1,51 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dilidili/blocs/newest/newest.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:dilidili/lib/library.dart';
 import 'package:dilidili/http.dart' as http;
 import 'package:dilidili/utils/html_util.dart';
 import 'package:dilidili/bean/video.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:convert';
 
+import '../application.dart';
+
 //最近更新
-class NewBody extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => new NewBodyState();
-}
-
-class NewBodyState extends State<NewBody>
-//    with AutomaticKeepAliveClientMixin
-{
-  bool isHttpComplete = false;
-  var cartoons = <Cartoon>[];
-  var gridItem = <Widget>[];
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-
+class NewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Application.key = _scaffoldKey;
-    if (isHttpComplete) {
-      return new Scaffold(
-        key: _scaffoldKey,
-        body: GridView.builder(
-          itemCount: cartoons.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 166 / 117,
-          ),
-          // staggeredTileBuilder: (_index) => StaggeredTile.fit(2),
-          // crossAxisCount: 4,
-          //  mainAxisSpacing: 4.0,
+    final NewestBloc _bloc = BlocProvider.of<NewestBloc>(context);
+    return BlocBuilder<NewestEvent, NewestState>(
+      bloc: _bloc..dispatch(NewestLoadEvent()),
+      builder: (_context, _state) {
+        if (_state is NewestLoadedState) {
+          return Scaffold(
+            body: GridView.builder(
+              itemCount: _state.cartoons.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 166 / 117,
+              ),
+              // staggeredTileBuilder: (_index) => StaggeredTile.fit(2),
+              // crossAxisCount: 4,
+              //  mainAxisSpacing: 4.0,
 //        crossAxisSpacing: 4.0,
 //        childAspectRatio: 1.3,
-          itemBuilder: (_, i) {
-            return _buildGridItem(cartoons[i]);
-          },
-        ),
-      );
-    } else {
-      return new Center(
-        child: new CircularProgressIndicator(),
-      );
-    }
+              itemBuilder: (_, i) {
+                return _buildGridItem(_context, _state.cartoons[i]);
+              },
+            ),
+          );
+        } else {
+          return new Center(
+            child: new CircularProgressIndicator(),
+          );
+        }
+      },
+    );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      http.htmlGetHome((_htmlStr) {
-        HtmlUtils.parseHome(_htmlStr, (_cartoons) {
-          if (mounted)
-            setState(() {
-              cartoons = _cartoons;
-              isHttpComplete = true;
-            });
-        });
-      });
-    });
-  }
-
-  Widget _buildGridItem(Cartoon cartoon) {
+  Widget _buildGridItem(BuildContext context, Cartoon cartoon) {
     return Container(
       // width: MediaQuery.of(context).size.width / 2 - 5,
       // height: 117 * (MediaQuery.of(context).size.width / 2 - 5) / 166,
@@ -126,8 +105,4 @@ class NewBodyState extends State<NewBody>
       margin: const EdgeInsets.all(4.0),
     );
   }
-
-  // TODO: implement wantKeepAlive
-//  @override
-//  bool get wantKeepAlive => true;
 }

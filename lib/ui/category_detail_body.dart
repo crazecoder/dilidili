@@ -1,64 +1,61 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dilidili/bean/bean.dart';
+import 'package:dilidili/blocs/blocs.dart';
+import 'package:dilidili/blocs/category/category_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:dilidili/lib/library.dart';
-import 'package:dilidili/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../blocs/blocs.dart';
 
-class CategoryDetailBody extends StatefulWidget {
+import '../application.dart';
+
+class CategoryDetailBody extends StatelessWidget {
   final String url;
-  final bool isShow;
 
-  CategoryDetailBody({this.url, this.isShow = true});
-
-  @override
-  State<StatefulWidget> createState() => new CategoryDetailBodyState();
-}
-
-class CategoryDetailBodyState extends State<CategoryDetailBody>
-    with AutomaticKeepAliveClientMixin {
-  static bool _keepAlive = true;
-  bool isHttpComplete = false;
-  var cartoons = <Cartoon>[];
-  var gridItem = <Widget>[];
+  CategoryDetailBody({this.url});
 
   @override
   Widget build(BuildContext context) {
-    if (isHttpComplete && widget.isShow) {
-      return GridView.builder(
-        itemCount: cartoons.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 11 / 16,
-        ),
-//        mainAxisSpacing: 4.0,
-//        crossAxisSpacing: 4.0,
-//        childAspectRatio: 1.3,
-        itemBuilder: (_, i) {
-          return _buildGridItem(cartoons[i]);
-        },
-      );
-    } else {
-      return new Center(
-        child: new CircularProgressIndicator(),
-      );
-    }
+    final CategoryDetailBloc _bloc = BlocProvider.of<CategoryDetailBloc>(context);
+    return BlocBuilder<CategoryDetailEvent, CategoryDetailState>(
+      bloc: _bloc..dispatch(CategoryDetailLoadEvent(url)),
+      builder: (_context, _state) {
+        if (_state is CategoryDetailLoaded) {
+          return Scrollbar(
+            child: GridView.builder(
+              itemCount: _state.cartoons.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 11 / 16,
+              ),
+              itemBuilder: (_, i) {
+                return _buildGridItem(_context,_state.cartoons[i]);
+              },
+            ),
+          );
+        } else if (_state is InitialCategoryDetailState) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
   }
 
-  Widget _buildGridItem(Cartoon cartoon) {
-    return new GestureDetector(
+  Widget _buildGridItem(context,Cartoon cartoon) {
+    return GestureDetector(
       onTap: () {
         String url = cartoon.url.replaceAll("/", "[");
         String picture = cartoon.picture.replaceAll("/", "[");
         Application.router
             .navigateTo(context, '/detail/$url/${cartoon.name}/$picture');
       },
-      child: buildGridItem(cartoon),
+      child: buildGridItem(context,cartoon),
     );
   }
 
-  Widget buildGridItem(Cartoon cartoon) => Container(
+  Widget buildGridItem(context,Cartoon cartoon) => Container(
         // width: MediaQuery.of(context).size.width / 2 - 5,
         // height: 16 * (MediaQuery.of(context).size.width / 2 - 5) / 11,
         margin: EdgeInsets.all(5),
@@ -102,32 +99,4 @@ class CategoryDetailBodyState extends State<CategoryDetailBody>
           ],
         ),
       );
-
-  @override
-  void initState() {
-    super.initState();
-    http.htmlGetCategoryDetail(
-      widget.url,
-      sfn: (_cs) {
-        if (mounted)
-          setState(() {
-            cartoons = _cs;
-            isHttpComplete = true;
-          });
-      },
-    );
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _keepAlive = true;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  bool get wantKeepAlive => _keepAlive;
 }

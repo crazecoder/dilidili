@@ -1,15 +1,35 @@
 import 'dart:convert';
 
+import 'package:dilidili/bean/bean.dart';
 import 'package:flutter/material.dart';
-import 'package:dilidili/play_home.dart';
-import 'package:stack_trace/stack_trace.dart';
-import 'home.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
+import 'application.dart';
+import 'ui/home.dart';
 import 'package:fluro/fluro.dart';
-import 'lib/library.dart';
 import 'ui/detail_home.dart';
-import 'constant.dart';
-import 'utils/my_print.dart';
+import 'ui/play_home.dart';
+import 'blocs/blocs.dart' as blocs;
 
+class SimpleBlocDelegate extends BlocDelegate {
+  @override
+  void onEvent(Bloc bloc, Object event) {
+    super.onEvent(bloc, event);
+    print(event);
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print(transition);
+  }
+
+  @override
+  void onError(Bloc bloc, Object error, StackTrace stacktrace) {
+    super.onError(bloc, error, stacktrace);
+    print(error);
+  }
+}
 void main() {
   // debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   final Router router = new Router();
@@ -21,10 +41,12 @@ void main() {
         String json = params["json"][0];
         json = json.replaceAll("]", "/");
         Map map = jsonDecode(json);
-        log(json);
         Cartoon cartoon = new Cartoon.fromJson(map);
-        return new PlayHome(
-          cartoon: cartoon,
+        return BlocProvider<blocs.PlayBloc>(
+          builder: (_) => blocs.PlayBloc(),
+          child: PlayHome(
+            cartoon: cartoon,
+          ),
         );
       },
     ),
@@ -33,41 +55,58 @@ void main() {
     "/detail/:url/:name/:picture",
     handler: new Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-        return new DetailHome(
-          url: params["url"][0],
-          name: params["name"][0],
-          picture: params["picture"][0],
+        return BlocProvider<blocs.DetailBloc>(
+          builder: (_) => blocs.DetailBloc(),
+          child: DetailHome(
+            url: params["url"][0],
+            name: params["name"][0],
+            picture: params["picture"][0],
+          ),
         );
       },
     ),
   );
   Application.router = router;
 
-  Chain.capture(() {
-    runApp(new MyApp());
-  });
+  BlocSupervisor.delegate = SimpleBlocDelegate();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  // final GlobalKey<ScaffoldState> _key = GlobalKey();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      debugShowCheckedModeBanner: ConstantValue.IS_DEBUG,
+    // final RouterBloc routerBloc = RouterBloc();
+    return MaterialApp(
       onGenerateRoute: Application.router.generator,
       title: 'Flutter Demo',
-      theme: new ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-        // counter didn't reset back to zero; the application is not restarted.
+      theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new Home(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider<blocs.TabBloc>(
+            builder: (_) => blocs.TabBloc(),
+          ),
+          BlocProvider<blocs.HistoryBloc>(
+            builder: (_) => blocs.HistoryBloc(),
+          ),
+          BlocProvider<blocs.CategoryBloc>(
+            builder: (_) => blocs.CategoryBloc(),
+          ),
+          BlocProvider<blocs.CategoryDetailBloc>(
+            builder: (_) => blocs.CategoryDetailBloc(),
+          ),
+          BlocProvider<blocs.NewestBloc>(
+            builder: (_) => blocs.NewestBloc(),
+          ),
+          BlocProvider<blocs.SearchBloc>(
+            builder: (_) => blocs.SearchBloc(),
+          ),
+        ],
+        child: HomePage(),
+      ),
     );
   }
 }

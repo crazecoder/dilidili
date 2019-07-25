@@ -1,45 +1,42 @@
-import 'dart:async';
 import 'dart:convert';
 
+import 'package:dilidili/bean/bean.dart';
 import 'package:flutter/material.dart';
-import 'package:dilidili/utils/html_util.dart';
-import 'package:dilidili/http.dart' as http;
-import 'package:dilidili/lib/library.dart';
+import 'package:dilidili/blocs/blocs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SearchBody extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => SearchBodyState();
-}
+import '../application.dart';
 
-class SearchBodyState extends State<SearchBody> {
+class SearchBody extends StatelessWidget {
   final TextEditingController _editingController = TextEditingController();
-  var _cartoons = <Cartoon>[];
-  bool _isHttpCompelete;
-  bool _isFailed = false;
-
   @override
   Widget build(BuildContext context) {
-    if (_isHttpCompelete == null) return _buildInitializeBody();
-    if (_isHttpCompelete && (_cartoons.length == 0 || _isFailed)) {
-      return _buildEmptyOrErrorBody();
-    }
-    if (_isHttpCompelete && _cartoons.length != 0) {
-      return _buildListBody();
-    } else if (!_isHttpCompelete) {
-      return _buildLoadingBody();
-    } else {
-      return _buildInitializeBody();
-    }
+    final SearchBloc _bloc = BlocProvider.of<SearchBloc>(context);
+    return BlocBuilder<SearchEvent, SearchState>(
+      bloc: _bloc,
+      builder: (_context, _state) {
+        // if(_state is InitialSearchState){
+        // }else
+        if (_state is SearchEmptyState) {
+          return _buildEmptyOrErrorBody(_bloc);
+        } else if (_state is SearchingState) {
+          return _buildLoadingBody(_bloc);
+        } else if (_state is SearchSuccessState) {
+          return _buildListBody(_context,_bloc);
+        }
+        return _buildInitializeBody(_bloc);
+      },
+    );
   }
 
-  Widget _buildInitializeBody() => Flex(
-        children: <Widget>[_buildSearchView()],
+  Widget _buildInitializeBody(_bloc) => Flex(
+        children: <Widget>[_buildSearchView(_bloc)],
         direction: Axis.vertical,
       );
-  Widget _buildLoadingBody() => Scaffold(
+  Widget _buildLoadingBody(_bloc) => Scaffold(
         body: Column(
           children: <Widget>[
-            _buildSearchView(),
+            _buildSearchView(_bloc),
             Expanded(
               child: Center(
                 child: CircularProgressIndicator(),
@@ -48,61 +45,35 @@ class SearchBodyState extends State<SearchBody> {
           ],
         ),
       );
-  Widget _buildEmptyOrErrorBody() => Scaffold(
+  Widget _buildEmptyOrErrorBody(SearchBloc _bloc) => Scaffold(
         body: Column(
           children: <Widget>[
-            _buildSearchView(),
+            _buildSearchView(_bloc),
             Expanded(
               child: Center(
-                child: Text(_isFailed ? "获取数据异常，请访问官网查看" : "抱歉，没有找到相关结果。"),
+                child: Text(_bloc.currentState is SearchFailedState ? "获取数据异常，请访问官网查看" : "抱歉，没有找到相关结果。"),
               ),
             )
           ],
         ),
       );
-  Widget _buildSearchView() {
+  Widget _buildSearchView(SearchBloc _bloc) {
     return Container(
       margin: EdgeInsets.all(10),
       height: 40,
       child: TextField(
         textInputAction: TextInputAction.search,
         onSubmitted: (_query) {
-          setState(() {
-            _isHttpCompelete = false;
-            _isFailed = false;
-          });
-          runZoned(
-            () {
-              http.htmlGetSearch(
-                (_html) {
-                  try {
-                    HtmlUtils.parseSearch(_html, (_cs) {
-                      setState(() {
-                        _cartoons = _cs;
-                        _isHttpCompelete = true;
-                      });
-                    });
-                  } catch (e) {
-                    _isFailed = true;
-                  }
-                },
-                _editingController.text,
-              );
-            },
-            onError: (_error, _stack) {
-              setState(
-                () {
-                  _isFailed = true;
-                },
-              );
-            },
-          );
+          _bloc.dispatch(SearchClickEvent(_query));
         },
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.search),
-          suffixIcon: GestureDetector(child: Icon(Icons.delete_sweep),onTap: (){
-            _editingController.clear();
-          },),
+          suffixIcon: GestureDetector(
+            child: Icon(Icons.delete_sweep),
+            onTap: () {
+              WidgetsBinding.instance.addPostFrameCallback((_) => _editingController.clear());
+            },
+          ),
           contentPadding: EdgeInsets.all(10),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -114,33 +85,33 @@ class SearchBodyState extends State<SearchBody> {
     );
   }
 
-  Widget _buildListBody() => Scaffold(
+  Widget _buildListBody(context,SearchBloc _bloc) => Scaffold(
         body: Column(
           children: <Widget>[
-            _buildSearchView(),
+            _buildSearchView(_bloc),
             Expanded(
               child: ListView.builder(
-                  itemCount: _cartoons.length,
+                  itemCount: (_bloc.currentState as SearchSuccessState).cartoons.length,
                   itemBuilder: (_, i) {
                     return GestureDetector(
                       onTap: () {
-                        String url = _cartoons[i].url.replaceAll("/", "[");
+                        String url = (_bloc.currentState as SearchSuccessState).cartoons[i].url.replaceAll("/", "[");
                         if (url.contains("watch")) {
-                          String json = jsonEncode(_cartoons[i]);
+                          String json = jsonEncode((_bloc.currentState as SearchSuccessState).cartoons[i]);
                           json = json.replaceAll("/", "]");
                           json = json.replaceAll("?", "");
                           Application.router.navigateTo(context, '/play/$json');
                         } else
                           Application.router.navigateTo(context,
-                              '/detail/$url/${_cartoons[i].name}/${_cartoons[i].picture}');
+                              '/detail/$url/${(_bloc.currentState as SearchSuccessState).cartoons[i].name}/${(_bloc.currentState as SearchSuccessState).cartoons[i].picture}');
                       },
                       child: Column(
-                        crossAxisAlignment:CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             width: MediaQuery.of(context).size.width,
                             padding: EdgeInsets.all(10.0),
-                            child: Text(_cartoons[i].name),
+                            child: Text((_bloc.currentState as SearchSuccessState).cartoons[i].name),
                           ),
                           Divider()
                         ],
