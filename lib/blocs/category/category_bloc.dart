@@ -5,7 +5,6 @@ import '../../bean/bean.dart';
 import '../../http.dart' as http;
 import '../../utils/html_util.dart';
 
-
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   @override
   CategoryState get initialState => InitialCategoryState();
@@ -16,16 +15,18 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   ) async* {
     if (event is CategoryLoadEvent) {
       yield* _loadCategory();
-    } 
+    }
   }
 
   Stream<CategoryState> _loadCategory() async* {
     String _html = await http.htmlGetCategory();
     List<Category> _categories = await HtmlUtils.parseCategory(_html);
-    yield CategoryLoaded(categorys:_categories);
+    yield CategoryLoaded(categorys: _categories);
   }
 }
-class CategoryDetailBloc extends Bloc<CategoryDetailEvent, CategoryDetailState> {
+
+class CategoryDetailBloc
+    extends Bloc<CategoryDetailEvent, CategoryDetailState> {
   @override
   CategoryDetailState get initialState => InitialCategoryDetailState();
 
@@ -38,16 +39,16 @@ class CategoryDetailBloc extends Bloc<CategoryDetailEvent, CategoryDetailState> 
     }
   }
 
-  Stream<CategoryDetailState> _loadCategoryDetail(CategoryDetailLoadEvent event) async* {
-    yield InitialCategoryDetailState();
+  Stream<CategoryDetailState> _loadCategoryDetail(
+      CategoryDetailLoadEvent event) async* {
+    // yield InitialCategoryDetailState();
     List<Cartoon> _cartoons = await http.htmlGetCategoryDetail(
       event.category,
     );
-    if(_cartoons.isEmpty){
+    if (_cartoons.isEmpty) {
       yield CategoryDetailEmpty();
-    }else{
-      yield CategoryDetailLoaded(cartoons:_cartoons);
+    } else {
+      yield CategoryDetailLoaded(url: event.category,cartoons: _cartoons);
     }
-    
   }
 }

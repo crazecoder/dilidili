@@ -16,15 +16,26 @@ class CategoryLoaded extends CategoryState {
 
 @immutable
 abstract class CategoryDetailState extends Equatable {
-  CategoryDetailState([List props = const []]) : super(props);
+  final String url;
+  CategoryDetailState(this.url,[List props = const []]) : super(props);
 }
-class InitialCategoryDetailState extends CategoryDetailState {}
+class InitialCategoryDetailState extends CategoryDetailState {
+  final String url;
+  InitialCategoryDetailState({this.url}):super(url);
+}
+class CategoryDetailLoadingState extends CategoryDetailState {
+  final String url;
+  CategoryDetailLoadingState({this.url}):super(url);
+}
 
 class CategoryDetailLoaded extends CategoryDetailState {
+  final String url;
   final List<Cartoon> cartoons;
-  CategoryDetailLoaded({this.cartoons}) : super([cartoons]);
+  CategoryDetailLoaded({this.url,this.cartoons}) : super(url,[cartoons]);
 }
 
-class CategoryDetailEmpty extends CategoryDetailState {}
+class CategoryDetailEmpty extends CategoryDetailState {
+   final String url;
+  CategoryDetailEmpty({this.url}):super(url);
+}
 
-// class CategoryLoadFailed extends CategoryDetailState {}

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:dilidili/bean/bean.dart';
+import 'package:dilidili/ui/history_body.dart';
+import 'package:dilidili/ui/new_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
@@ -28,8 +30,10 @@ class SimpleBlocDelegate extends BlocDelegate {
   void onError(Bloc bloc, Object error, StackTrace stacktrace) {
     super.onError(bloc, error, stacktrace);
     print(error);
+    print(stacktrace);
   }
 }
+
 void main() {
   // debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   final Router router = new Router();
@@ -95,9 +99,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<blocs.CategoryBloc>(
             builder: (_) => blocs.CategoryBloc(),
           ),
-          BlocProvider<blocs.CategoryDetailBloc>(
-            builder: (_) => blocs.CategoryDetailBloc(),
-          ),
+          // BlocProvider<blocs.CategoryDetailBloc>(
+          //   builder: (_) => blocs.CategoryDetailBloc(),
+          // ),
           BlocProvider<blocs.NewestBloc>(
             builder: (_) => blocs.NewestBloc(),
           ),

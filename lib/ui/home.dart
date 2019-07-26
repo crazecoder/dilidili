@@ -1,4 +1,3 @@
-import 'package:dilidili/db/db_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,15 +23,8 @@ class HomePage extends StatelessWidget {
     new BottomNavigationBarItem(icon: new Icon(Icons.search), title: titles[2]),
     new BottomNavigationBarItem(icon: new Icon(Icons.person), title: titles[3]),
   ];
-  var bodys = <Widget>[
-    new CategoryBody(),
-    new NewBody(),
-    new SearchBody(),
-    new HistoryBody(
-    ),
-  ];
 
-  Widget _buildBody(context,AppTab _state) {
+  Widget _buildBody(context, AppTab _state) {
     if (_state == AppTab.CATEGORY) {
       return CategoryBody();
     } else if (_state == AppTab.NEWEST) {
@@ -40,20 +32,22 @@ class HomePage extends StatelessWidget {
     } else if (_state == AppTab.SEARCH) {
       return SearchBody();
     } else if (_state == AppTab.HISTORY) {
-      return HistoryBody(bloc: BlocProvider.of<HistoryBloc>(context),);
+      return HistoryBody(
+        bloc: BlocProvider.of<HistoryBloc>(context),
+      );
     }
-    return CategoryBody();
   }
 
   @override
   Widget build(BuildContext context) {
     final _tabBloc = BlocProvider.of<TabBloc>(context);
+
     return BlocBuilder<TabEvent, AppTab>(
       bloc: _tabBloc,
       builder: (_context, _state) {
         return Scaffold(
-          appBar: _state != AppTab.CATEGORY ? _buildAppBar(_context,_state) : null,
-          body: _buildBody(_context,_state),
+          appBar: _buildAppBar(_context, _state),
+          body: _buildBody(_context, _state),
           bottomNavigationBar: BottomNavigationBar(
             items: items,
             currentIndex: AppTab.values.indexOf(_tabBloc.currentState),
@@ -77,13 +71,13 @@ class HomePage extends StatelessWidget {
                   padding: EdgeInsets.only(right: 10),
                 ),
                 onTap: () {
-                  BlocProvider.of<HistoryBloc>(_context)..dispatch(HistoryClearEvent());
-                  // DbHelper().clear();
-                  // _historyKey.currentState.clearList();
+                  BlocProvider.of<HistoryBloc>(_context)
+                    ..dispatch(HistoryClearEvent());
                 },
               )
             : Container(),
       ],
+      elevation: _state != AppTab.CATEGORY ? 3 : 0,
       centerTitle: true,
       title: titles[_state.index],
     );
