@@ -13,17 +13,16 @@ import '../application.dart';
 class CategoryDetailBody extends StatelessWidget {
   final String url;
   final CategoryDetailBloc bloc;
+  CategoryDetailBody({Key key, this.url, this.bloc}) : super(key: key);
 
-  CategoryDetailBody({this.url, this.bloc});
-
-  bool _isFirst = true;
   @override
   Widget build(BuildContext context) {
+    final bool _isFirst =
+        !bloc.cacheMap.containsKey(url) || !bloc.cacheMap[url];
     return BlocBuilder<CategoryDetailEvent, CategoryDetailState>(
       bloc: bloc,
       builder: (_context, _state) {
         if (_state is CategoryDetailLoaded) {
-          _isFirst = false;
           return Scrollbar(
             child: GridView.builder(
               itemCount: _state.cartoons?.length,
@@ -83,7 +82,6 @@ class CategoryDetailBody extends StatelessWidget {
                       child: new Text(
                         cartoon.name,
                         maxLines: 1,
-//                            softWrap: true,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:dilidili/bean/bean.dart';
-import 'package:dilidili/ui/history_body.dart';
-import 'package:dilidili/ui/new_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
@@ -97,13 +95,13 @@ class MyApp extends StatelessWidget {
             builder: (_) => blocs.HistoryBloc(),
           ),
           BlocProvider<blocs.CategoryBloc>(
-            builder: (_) => blocs.CategoryBloc(),
+            builder: (_) => blocs.CategoryBloc()..dispatch(blocs.CategoryLoadEvent()),
           ),
           // BlocProvider<blocs.CategoryDetailBloc>(
           //   builder: (_) => blocs.CategoryDetailBloc(),
           // ),
           BlocProvider<blocs.NewestBloc>(
-            builder: (_) => blocs.NewestBloc(),
+            builder: (_) => blocs.NewestBloc()..dispatch(blocs.NewestLoadEvent()),
           ),
           BlocProvider<blocs.SearchBloc>(
             builder: (_) => blocs.SearchBloc(),

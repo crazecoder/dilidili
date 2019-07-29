@@ -7,6 +7,11 @@ abstract class CategoryEvent extends Equatable {
 }
 
 class CategoryLoadEvent extends CategoryEvent{}
+class CategoryChangeEvent extends CategoryEvent{
+  final int position;
+  CategoryChangeEvent({this.position});
+}
+
 
 
 @immutable

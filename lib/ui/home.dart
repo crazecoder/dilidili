@@ -8,27 +8,25 @@ import 'history_body.dart';
 import '../blocs/blocs.dart';
 
 class HomePage extends StatelessWidget {
-  final GlobalKey key;
-  HomePage({this.key});
-
   static var titles = <Text>[
-    new Text("首页"),
-    new Text("追番"),
-    new Text("搜索"),
-    new Text("我的"),
+    Text("首页"),
+    Text("追番"),
+    Text("搜索"),
+    Text("我的"),
   ];
   var items = <BottomNavigationBarItem>[
-    new BottomNavigationBarItem(icon: new Icon(Icons.home), title: titles[0]),
-    new BottomNavigationBarItem(icon: new Icon(Icons.toc), title: titles[1]),
-    new BottomNavigationBarItem(icon: new Icon(Icons.search), title: titles[2]),
-    new BottomNavigationBarItem(icon: new Icon(Icons.person), title: titles[3]),
+    BottomNavigationBarItem(icon: Icon(Icons.home), title: titles[0]),
+    BottomNavigationBarItem(icon: Icon(Icons.toc), title: titles[1]),
+    BottomNavigationBarItem(icon: Icon(Icons.search), title: titles[2]),
+    BottomNavigationBarItem(icon: Icon(Icons.person), title: titles[3]),
   ];
 
   Widget _buildBody(context, AppTab _state) {
     if (_state == AppTab.CATEGORY) {
+      // return CategoryBody(key: PageStorageKey("category"),);
       return CategoryBody();
     } else if (_state == AppTab.NEWEST) {
-      return NewBody();
+      return NewBody(key: PageStorageKey("new"),);
     } else if (_state == AppTab.SEARCH) {
       return SearchBody();
     } else if (_state == AppTab.HISTORY) {

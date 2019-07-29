@@ -1,9 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dilidili/blocs/newest/newest.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:dilidili/http.dart' as http;
-import 'package:dilidili/utils/html_util.dart';
 import 'package:dilidili/bean/video.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:convert';
@@ -12,11 +9,13 @@ import '../application.dart';
 
 //最近更新
 class NewBody extends StatelessWidget {
+  const NewBody({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final NewestBloc _bloc = BlocProvider.of<NewestBloc>(context);
     return BlocBuilder<NewestEvent, NewestState>(
-      bloc: _bloc..dispatch(NewestLoadEvent()),
+      bloc: _bloc,
       builder: (_context, _state) {
         if (_state is NewestLoadedState) {
           return Scaffold(
@@ -26,19 +25,14 @@ class NewBody extends StatelessWidget {
                 crossAxisCount: 2,
                 childAspectRatio: 166 / 117,
               ),
-              // staggeredTileBuilder: (_index) => StaggeredTile.fit(2),
-              // crossAxisCount: 4,
-              //  mainAxisSpacing: 4.0,
-//        crossAxisSpacing: 4.0,
-//        childAspectRatio: 1.3,
               itemBuilder: (_, i) {
                 return _buildGridItem(_context, _state.cartoons[i]);
               },
             ),
           );
         } else {
-          return new Center(
-            child: new CircularProgressIndicator(),
+          return Center(
+            child: CircularProgressIndicator(),
           );
         }
       },
