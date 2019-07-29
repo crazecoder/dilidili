@@ -2,7 +2,10 @@
 
 嘀哩嘀哩客户端
 
-[apk下载](https://raw.githubusercontent.com/crazecoder/dilidili/master/apk/flutter-dilidili.apk)
+[apk下载（flutter_gsyplayer）](https://raw.githubusercontent.com/crazecoder/dilidili/master/apk/flutter-dilidili.apk)
+
+
+[bloc版apk下载（flutter_gsyplayer）](https://raw.githubusercontent.com/crazecoder/dilidili/master/apk/flutter-dilidili-bloc.apk)
 
 ## 截图
 
