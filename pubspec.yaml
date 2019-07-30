@@ -4,6 +4,8 @@ description: A new Flutter project.
 dependencies:
   flutter:
     sdk: flutter
+  flutter_bloc: ^0.19.1
+  equatable: ^0.3.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -16,15 +18,15 @@ dev_dependencies:
   http_client: ^0.5.0
   html: any
   cached_network_image: ^1.0.0
-  flutter_staggered_grid_view: ^0.2.4
-  url_launcher: ^4.0.2
   fluro: any
-  sqflite: any
+  sqflite: ^1.1.6+2
   json_serializable: ^2.0.1
-#  build_runner: ^0.7.6
   flutter_webview_plugin: ^0.3.5
-  flutter_ijkplayer: ^0.3.0
+  flutter_ijkplayer: ^0.3.1
 
+#  flutter_gsyplayer:
+#    git:
+#      url: git://github.com/crazecoder/flutter_gsyplayer.git
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
