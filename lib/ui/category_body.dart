@@ -24,7 +24,8 @@ class _CategoryBodyState extends State<CategoryBody>
             bloc: BlocProvider.of<TabBloc>(context),
             listener: (context, state) {
               if (state != AppTab.CATEGORY) {
-                _bloc.dispatch(CategoryChangeEvent(position: _controller.index));
+                _bloc
+                    .dispatch(CategoryChangeEvent(position: _controller.index));
               }
             },
             child: Scaffold(
@@ -44,7 +45,11 @@ class _CategoryBodyState extends State<CategoryBody>
                 preferredSize: Size.fromHeight(48.0),
               ),
               body: TabBarView(
-                controller: _controller,
+                controller: _controller
+                  ..addListener(() {
+                    _bloc.dispatch(
+                        CategoryChangeEvent(position: _controller.index));
+                  }),
                 physics: ClampingScrollPhysics(),
                 children: _state.categorys.map((category) {
                   // final CategoryDetailBloc bloc = CategoryDetailBloc()..dispatch(CategoryDetailLoadEvent(category.url));
